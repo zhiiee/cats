@@ -1,0 +1,10 @@
+page {
+  position: fixed;
+  background-color: $background-color;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  color: transparent;
+}

@@ -1,0 +1,8 @@
+{
+  "develop": {
+    "env": "develop-r839l"
+  },
+  "release": {
+    "env": "release-85tbc"
+  }
+}
