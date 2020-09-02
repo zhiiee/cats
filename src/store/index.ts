@@ -5,8 +5,15 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    statusBarHeight: 0,
+    navigationWidth: 0,
+    navigationHeight: 0,
+    userInfo: undefined
   },
   mutations: {
+    /**
+     * 检查更新
+     */
     checkUpdate () {
       console.log('checkUpdate')
       if (uni.canIUse('getUpdateManager')) {
@@ -38,6 +45,20 @@ export default new Vuex.Store({
           content: '当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试！'
         })
       }
+    },
+    /**
+     * 设置系统信息
+     */
+    setSystemInfo (state, info) {
+      state.statusBarHeight = info.statusBarHeight
+      state.navigationWidth = info.navigationWidth
+      state.navigationHeight = info.navigationHeight
+    },
+    /**
+     * 设置用户信息
+     */
+    setUserInfo (state, info) {
+      state.userInfo = info
     }
   },
   actions: {

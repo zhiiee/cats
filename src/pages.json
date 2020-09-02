@@ -2,11 +2,40 @@
   "pages": [
     {
       "path": "pages/index/index"
+    },
+    {
+      "path": "pages/home/home"
+    },
+    {
+      "path": "pages/science/science"
+    },
+    {
+      "path": "pages/about/about"
     }
   ],
   "globalStyle": {
     "navigationStyle": "custom",
     "navigationBarTextStyle": "black",
     "backgroundColor": "#F7F2EE"
+  },
+  "tabBar": {
+    "color": "#13100E",
+    "selectedColor": "#FF7F50",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "猫猫"
+      },
+      {
+        "pagePath": "pages/science/science",
+        "text": "科普"
+      },
+      {
+        "pagePath": "pages/about/about",
+        "text": "关于"
+      }
+    ]
   }
 }
