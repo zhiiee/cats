@@ -12,6 +12,8 @@ cloudfunctions                             // 云开发目录
     │
     └──package.json
 
+init                                       // 初始数据
+
 public
 │
 └── index.html

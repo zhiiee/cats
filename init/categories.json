@@ -1,0 +1,24 @@
+{ "type": 1, "code": "lihua", "name": "狸花", "seq": 10, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
+{ "type": 1, "code": "chunse", "name": "纯色", "seq": 20, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
+{ "type": 1, "code": "daimao", "name": "玳瑁", "seq": 30, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
+{ "type": 1, "code": "sanhua", "name": "三花", "seq": 40, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
+{ "type": 1, "code": "nainiu", "name": "奶牛", "seq": 50, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
+{ "type": 1, "code": "pinzhong", "name": "品种", "seq": 60, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
+{ "type": 1, "code": "huijia", "name": "回家", "seq": 70, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
+{ "type": 1, "code": "waichu", "name": "外出", "seq": 80, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
+{ "type": 1, "code": "miaoxing", "name": "喵星", "seq": 90, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
+
+
+{ "type": 2, "code": "maose", "name": "毛色", "seq": 10, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
+{ "type": 2, "code": "xingbie", "name": "性别", "seq": 20, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
+{ "type": 2, "code": "nianling", "name": "年龄", "seq": 30, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
+{ "type": 2, "code": "jueyu", "name": "绝育", "seq": 40, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
+{ "type": 2, "code": "xingge", "name": "性格", "seq": 50, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
+{ "type": 2, "code": "waimao", "name": "外貌", "seq": 60, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
+
+
+{ "type": 3, "code": "weishi", "name": "喂食", "seq": 10, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
+{ "type": 3, "code": "lumao", "name": "撸猫", "seq": 20, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
+{ "type": 3, "code": "jueyu", "name": "绝育", "seq": 30, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
+{ "type": 3, "code": "jibing", "name": "疾病", "seq": 40, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
+{ "type": 3, "code": "lingyang", "name": "领养", "seq": 50, "isHide": false, "isDelete": false, "createTime": 1599228717188, "updateTime": 1599228717188 }
