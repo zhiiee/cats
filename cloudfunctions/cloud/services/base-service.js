@@ -12,6 +12,19 @@ class BaseService {
   fail (erroCode = 0, msg = '') {
     return { erroCode, msg, code: -1 }
   }
+
+  /**
+   * 默认值
+   */
+  defaultValue () {
+    const dateTime = new Date().getTime()
+    return {
+      isHide: false,
+      isDelete: false,
+      createTime: dateTime,
+      updateTime: dateTime
+    }
+  }
 }
 
 module.exports = BaseService

@@ -19,13 +19,9 @@ class UsersService extends BaseService {
     let result = await db.collection('users')
       .where({ openId: openId })
       .field({
-        _id: true,
         openId: true,
-        isAdmin: true,
         level: true,
-        isHide: true,
-        isDelete: true,
-        updateTime: true
+        isAdmin: true
       })
       .get()
       .then(result => { return result.data.length > 0 ? result.data[0] : 0 })
@@ -37,8 +33,9 @@ class UsersService extends BaseService {
         .add({
           data: {
             openId: openId,
-            createTime: new Date().getTime(),
-            updateTime: new Date().getTime()
+            level: 0,
+            isAdmin: false,
+            ...this.defaultValue()
           }
         })
         .then(() => this.success({ openId: openId }))

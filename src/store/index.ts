@@ -5,10 +5,14 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    icon: __wxConfig.accountInfo.icon,
+    nickname: __wxConfig.accountInfo.nickname,
     statusBarHeight: 0,
     navigationWidth: 0,
     navigationHeight: 0,
-    userInfo: undefined
+    userInfo: undefined,
+    catTypes: [],
+    scienceTypes: []
   },
   mutations: {
     /**
@@ -59,6 +63,18 @@ export default new Vuex.Store({
      */
     setUserInfo (state, info) {
       state.userInfo = info
+    },
+    /**
+     * 猫咪品种
+     */
+    setCatTypes (state, types) {
+      state.catTypes = types
+    },
+    /**
+     * 科普分类
+     */
+    setScienceTypes (state, types) {
+      state.scienceTypes = types
     }
   },
   actions: {

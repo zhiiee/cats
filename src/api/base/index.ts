@@ -10,4 +10,9 @@ export default class BaseService {
     })
     return result
   }
+
+  parseItem (item: any) {
+    item.id = item._id
+    return item
+  }
 }

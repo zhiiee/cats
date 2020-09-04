@@ -13,7 +13,7 @@
 import { Component, Provide, Vue } from 'vue-property-decorator'
 import Loading from '@/components/loading/loading.vue'
 import PageStatus from '@/components/page-status/page-status.vue'
-import { Users } from '@/api'
+import { Users, Categories } from '@/api'
 
 /**
  * 首页
@@ -44,6 +44,33 @@ export default class Index extends Vue {
           return
         }
         this.$store.commit('setUserInfo', userInfo)
+
+        // type 1：品种、2：属性、3：科普
+        // 猫咪品种
+        const catTypes = await Categories.list({ type: 1 })
+        if (catTypes === -1) {
+          this.isError = true
+          return
+        }
+        this.$store.commit('setCatTypes', catTypes.map((type: any) => {
+          return {
+            code: type.code,
+            name: type.name
+          }
+        }))
+
+        // 科普分类
+        const scienceTypes = await Categories.list({ type: 3 })
+        if (scienceTypes === -1) {
+          this.isError = true
+          return
+        }
+        this.$store.commit('setScienceTypes', scienceTypes.map((type: any) => {
+          return {
+            code: type.code,
+            name: type.name
+          }
+        }))
 
         // 放在这里初始化是为了兼容 部分基础库或设备自定义navbar会有问题
         this.$nextTick(() => {
