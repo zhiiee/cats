@@ -4,7 +4,7 @@
     <tab-bar :labels="catTypes" :selectedIndex="tabIndex" @loaded="tabBarLoaded" @change="onTabChange" :auto="true"/>
     <swiper :current="current" @change="onChange" :style="{ height: `calc(100vh - ${statusBarHeight}px - ${navigationHeight}px - ${tabBarHeight}px)` }">
       <swiper-item v-for="(item, index) of catTypes" :key="index">
-        <view></view>
+        <cat-list :type="item.code" :isInit="isInit[index]"/>
       </swiper-item>
     </swiper>
   </view>
@@ -15,10 +15,11 @@ import { Component, Provide, Mixins } from 'vue-property-decorator'
 import Share from '@/mixins/share'
 import NavigationBar from '@/components/navigation-bar/navigation-bar.vue'
 import TabBar from '@/components/tab-bar/tab-bar.vue'
+import CatList from '@/components/cat-list/cat-list.vue'
 
 @Component({
   name: 'Home',
-  components: { NavigationBar, TabBar }
+  components: { NavigationBar, TabBar, CatList }
 })
 export default class Home extends Mixins(Share) {
   @Provide()

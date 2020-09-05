@@ -10,13 +10,15 @@ cloudfunctions                             // 云开发目录
     │   │
     │   ├── categories-service.js          // 分类相关接口
     │   │
+    │   ├── cats-service.js                // 猫咪相关接口
+    │   │
     │   └── users-service.js               // 用户相关接口
     │
-    ├──config.json                         // 云函数配置
+    ├── config.json                        // 云函数配置
     │
-    ├──index.js                            // 云函数入口
+    ├── index.js                           // 云函数入口
     │
-    └──package.json
+    └── package.json
 
 init                                       // 初始数据
 │
@@ -32,15 +34,19 @@ src
 │   │
 │   ├── base                               // 基类(所有接口服务类都要继承这个类)
 │   │  │
-│   │  └──index.ts
+│   │  └── index.ts
 │   │
 │   ├── categories                         // 分类相关接口
 │   │  │
-│   │  └──index.ts
+│   │  └── index.ts
+│   │
+│   ├── cats                               // 猫咪相关接口
+│   │  │
+│   │  └── index.ts
 │   │
 │   ├── users                              // 用户相关接口
 │   │  │
-│   │  └──index.ts
+│   │  └── index.ts
 │   │
 │   └── index.ts                           // 用于导出模块
 │
@@ -48,21 +54,33 @@ src
 │
 ├── components                             // 组件都写在这个目录
 │   │
+│   ├── cat-item
+│   │  │
+│   │  └── cat-item.vue                    // 猫咪卡片组件
+│   │
+│   ├── cat-list
+│   │  │
+│   │  └── cat-list.vue                    // 猫咪列表组件
+│   │
 │   ├── loading
 │   │  │
-│   │  └──loading.vue                      // 加载组件
+│   │  └── loading.vue                     // 加载组件
 │   │
 │   ├── navigation-bar
 │   │  │
-│   │  └──navigation-bar.vue               // 自定义nav-bar组件
+│   │  └── navigation-bar.vue              // 自定义nav-bar组件
+│   │
+│   ├── page-main
+│   │  │
+│   │  └── page-main.vue                   // 主内容页面组件
 │   │
 │   ├── page-status
 │   │  │
-│   │  └──page-status.vue                  // 页面状态组件
+│   │  └── page-status.vue                 // 页面状态组件
 │   │
 │   └── tab-bar
 │      │
-│      └──tab-bar.vue                      // 头部tab-bar组件
+│      └── tab-bar.vue                     // 头部tab-bar组件
 │
 ├── mixins                                 // 一些混入的类都写在这个目录
 │   │
@@ -72,19 +90,19 @@ src
 │   │
 │   ├── about
 │   │  │
-│   │  └──about.vue                        // 关于页面
+│   │  └── about.vue                       // 关于页面
 │   │
 │   ├── home
 │   │  │
-│   │  └──home.vue                         // 猫咪列表页面（主页）
+│   │  └── home.vue                        // 猫咪列表页面（主页）
 │   │
 │   ├── index
 │   │  │
-│   │  └──index.vue                        // 加载页面（首页）
+│   │  └── index.vue                       // 加载页面（首页）
 │   │
 │   └── science
 │      │
-│      └──science.vue                      // 科普页面
+│      └── science.vue                     // 科普页面
 │
 ├── plugins                                // 第三方库都放到这里(按名称区分)
 │

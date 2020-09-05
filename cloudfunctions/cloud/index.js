@@ -1,11 +1,13 @@
 const cloud = require('wx-server-sdk')
 const Users = require('./services/users-service')
 const Categories = require('./services/categories-service')
+const Cats = require('./services/cats-service')
 
 // Api 对象
 const api = {
   users: new Users(),
-  categories: new Categories()
+  categories: new Categories(),
+  cats: new Cats()
 }
 
 // 初始化 cloud
@@ -31,6 +33,7 @@ exports.main = async (event, context) => {
     try {
       await db.createCollection('users').catch(() => null)
       await db.createCollection('categories').catch(() => null)
+      await db.createCollection('cats').catch(() => null)
     } catch (error) {
       console.log(error)
     } finally {
