@@ -1,7 +1,7 @@
 <template>
   <view class="page-status">
     <view class="page-info">
-      <img :src="status === 1 ? '/static/images/error.svg' : '/static/images/empty.svg'"/>
+      <image :src="status === 1 ? '/static/images/error.svg' : '/static/images/empty.svg'"/>
       <view>{{ message }}</view>
       <button class="status-button" hover-class="status-button-hover" v-if="showButton" @click="onReload">重新呼叫</button>
     </view>

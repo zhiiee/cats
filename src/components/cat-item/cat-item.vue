@@ -1,7 +1,7 @@
 <template>
   <view class="item" hover-class="item-hover" @click="goCatDetail">
     <view class="item-avatar">
-      <img :src="item.avatar"/>
+      <image :src="item.avatar"/>
     </view>
     <view class="item-content">
       <view class="item-name">{{ item.name }}</view>

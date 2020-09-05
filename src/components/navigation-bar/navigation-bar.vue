@@ -9,7 +9,7 @@
       }">
       <view class="navigation-bar-left" :style="{ width: `${navigationWidth}px` }">
         <view class="title">
-          <img class="icon" :src="icon">
+          <image class="icon" :src="icon">
           <view class="nickname" :style="{ lineHeight: `${navigationHeight}px` }">{{ nickname }}</view>
         </view>
       </view>
