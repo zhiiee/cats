@@ -11,6 +11,14 @@
     },
     {
       "path": "pages/about/about"
+    },
+    {
+      "path": "pages/detail/detail",
+      "style": {
+        "navigationStyle": "default",
+        "backgroundColor": "#F7F2EE",
+        "navigationBarBackgroundColor": "#F7F2EE"
+      }
     }
   ],
   "globalStyle": {

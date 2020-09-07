@@ -21,7 +21,9 @@ export default class CatItem extends Vue {
   item!: any
 
   goCatDetail () {
-    console.log('goCatDetail')
+    uni.navigateTo({
+      url: `/pages/detail/detail?id=${this.item.id}&title=${this.item.name}`
+    })
   }
 }
 </script>

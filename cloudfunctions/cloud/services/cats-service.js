@@ -56,6 +56,23 @@ class CatsService extends BaseService {
 
     return { data: result }
   }
+
+  /**
+   * 查询猫咪详细
+   * @param {*} data
+   * @param {*} context
+   */
+  async detail (data, context) {
+    const { id } = data
+    let collection = db.collection('cats')
+    let result = await collection
+      .doc(id)
+      .get()
+      .then(result => this.success(result.data))
+      .catch(() => this.fail({}))
+
+    return { data: result }
+  }
 }
 
 module.exports = CatsService

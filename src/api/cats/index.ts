@@ -16,4 +16,15 @@ export default class CatsService extends BaseService {
     }
     return -1
   }
+
+  /**
+   * 获取猫咪详情
+   */
+  async detail (id: string) {
+    const result: any = await this.callFunction('cats', 'detail', { id })
+    if (result.code === 0) {
+      return this.parseItem(result.data)
+    }
+    return -1
+  }
 }
