@@ -18,4 +18,18 @@ export default class Share extends Vue {
       }
     }
   }
+
+  onShareTimeline () {
+    if (this.$options.name === 'Detail') {
+      return {
+        title: `本喵的名字叫: ${this.detail.name}`,
+        imageUrl: this.detail.avatar
+      }
+    } else {
+      return {
+        title: '流浪猫速查手册',
+        path: '/pages/index/index'
+      }
+    }
+  }
 }

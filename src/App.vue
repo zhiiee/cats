@@ -15,9 +15,12 @@ export default Vue.extend({
       })
     }
   },
-  onShow () {
+  // @ts-ignore
+  onShow (options: App.LaunchShowOption) {
     console.log('App Show')
-    this.$store.commit('checkUpdate')
+    if (options.scene !== 1154 && options.scene !== 1155) {
+      this.$store.commit('checkUpdate')
+    }
   },
   onHide () {
     console.log('App Hide')
