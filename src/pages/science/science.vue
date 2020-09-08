@@ -4,7 +4,7 @@
     <tab-bar :labels="scienceTypes" :selectedIndex="tabIndex" @loaded="tabBarLoaded" @change="onTabChange" :auto="true"/>
     <swiper :current="current" @change="onChange" :style="{ height: `calc(100vh - ${statusBarHeight}px - ${navigationHeight}px - ${tabBarHeight}px)` }">
       <swiper-item v-for="(item, index) of scienceTypes" :key="index">
-        <view></view>
+        <article-view :code="item.code" :isInit="isInit[index]"/>
       </swiper-item>
     </swiper>
   </view>
@@ -15,10 +15,11 @@ import { Component, Provide, Mixins } from 'vue-property-decorator'
 import Share from '@/mixins/share'
 import NavigationBar from '@/components/navigation-bar/navigation-bar.vue'
 import TabBar from '@/components/tab-bar/tab-bar.vue'
+import ArticleView from '@/components/article-view/article-view.vue'
 
 @Component({
   name: 'Science',
-  components: { NavigationBar, TabBar }
+  components: { NavigationBar, TabBar, ArticleView }
 })
 export default class Science extends Mixins(Share) {
   @Provide()

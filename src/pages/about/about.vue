@@ -3,7 +3,7 @@
     <navigation-bar/>
     <swiper :style="{ height: `calc(100vh - ${statusBarHeight}px - ${navigationHeight}px)` }">
       <swiper-item>
-        <view></view>
+        <article-view :code="'about'" :isInit="true"/>
       </swiper-item>
     </swiper>
   </view>
@@ -13,10 +13,11 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import Share from '@/mixins/share'
 import NavigationBar from '@/components/navigation-bar/navigation-bar.vue'
+import ArticleView from '@/components/article-view/article-view.vue'
 
 @Component({
   name: 'About',
-  components: { NavigationBar }
+  components: { NavigationBar, ArticleView }
 })
 export default class About extends Mixins(Share) {
   get statusBarHeight () {

@@ -6,6 +6,8 @@ cloudfunctions                             // 云开发目录
     │
     ├──services                            // 业务逻辑存放目录
     │   │
+    │   ├── articles-service.js            // 文章相关接口
+    │   │
     │   ├── base-service.js                // 基类(所有接口类都要继承这个类)
     │   │
     │   ├── categories-service.js          // 分类相关接口
@@ -22,6 +24,8 @@ cloudfunctions                             // 云开发目录
 
 init                                       // 初始数据
 │
+├── articles.json                          // 文章初始数据
+│
 └── categories.json                        // 分类初始数据
 
 public
@@ -31,6 +35,10 @@ public
 src
 │
 ├── api                                    // 调用接口的服务都写在这个目录(按模块区分)
+│   │
+│   ├── articles                           // 文章相关接口
+│   │  │
+│   │  └── index.ts
 │   │
 │   ├── base                               // 基类(所有接口服务类都要继承这个类)
 │   │  │
@@ -53,6 +61,10 @@ src
 ├── common                                 // 公共类都写在这个目录
 │
 ├── components                             // 组件都写在这个目录
+│   │
+│   ├── article-view
+│   │  │
+│   │  └── article-view.vue                // 文章组件
 │   │
 │   ├── cat-item
 │   │  │
@@ -92,6 +104,10 @@ src
 │   │  │
 │   │  └── about.vue                       // 关于页面
 │   │
+│   ├── detail
+│   │  │
+│   │  └── detail.vue                      // 猫咪详情
+│   │
 │   ├── home
 │   │  │
 │   │  └── home.vue                        // 猫咪列表页面（主页）
@@ -105,6 +121,8 @@ src
 │      └── science.vue                     // 科普页面
 │
 ├── plugins                                // 第三方库都放到这里(按名称区分)
+│   │
+│   └── jyf-parser                         // jin-yufeng/Parser 小程序富文本插件
 │
 ├── ststic                                 // 静态资源都放在这里(如图片)
 │   │
