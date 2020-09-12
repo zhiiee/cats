@@ -2,8 +2,8 @@
   "name": "cats",
   "appid": "",
   "description": "",
-  "versionName": "1.0.1",
-  "versionCode": "101",
+  "versionName": "2.0.0",
+  "versionCode": "200",
   "transformPx": false,
   "app-plus": {
     "modules": {},
