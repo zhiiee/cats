@@ -21,7 +21,7 @@
       }
     },
     {
-      "path": "pages/cats-admin/cats-admin",
+      "path": "pages/cats-manage/cats-manage",
       "style": {
         "navigationBarTitleText": "我的上报",
         "navigationStyle": "default",

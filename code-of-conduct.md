@@ -113,9 +113,9 @@ src
 │   │  │
 │   │  └── detail.vue                      // 猫咪详情
 │   │
-│   ├── cats-admin
+│   ├── cats-manage
 │   │  │
-│   │  └── cats-admin.vue                  // 我的上报管理页面
+│   │  └── cats-manage.vue                 // 我的上报管理页面（猫咪管理）
 │   │
 │   ├── home
 │   │  │

@@ -7,9 +7,9 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
-  name: 'CatsAdmin'
+  name: 'CatsManage'
 })
-export default class CatsAdmin extends Vue {
+export default class CatsManage extends Vue {
 }
 </script>
 

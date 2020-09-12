@@ -10,7 +10,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-cats-admin:before {
+.icon-cats-manage:before {
   content: "\e600";
 }
 
