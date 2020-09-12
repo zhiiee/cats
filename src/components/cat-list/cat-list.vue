@@ -4,7 +4,7 @@
     @refresherrefresh="onRefresherrefresh"
     @refresherrestore="onRefresherrestore"
     @refresherpulling="onRefresherpulling"
-    emtpyMessage="猫猫出去玩了 请改天再来"
+    emtpyMessage="猫咪出去玩了 请改天再来"
   >
     <view class="cat-content">
       <cat-item v-for="item in items" :key="item.post.id" :item="item"/>

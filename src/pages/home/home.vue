@@ -7,6 +7,7 @@
         <cat-list :type="item.code" :isInit="isInit[index]"/>
       </swiper-item>
     </swiper>
+    <action-tool/>
   </view>
 </template>
 
@@ -16,10 +17,11 @@ import Share from '@/mixins/share'
 import NavigationBar from '@/components/navigation-bar/navigation-bar.vue'
 import TabBar from '@/components/tab-bar/tab-bar.vue'
 import CatList from '@/components/cat-list/cat-list.vue'
+import ActionTool from '@/components/action-tool/action-tool.vue'
 
 @Component({
   name: 'Home',
-  components: { NavigationBar, TabBar, CatList }
+  components: { NavigationBar, TabBar, CatList, ActionTool }
 })
 export default class Home extends Mixins(Share) {
   @Provide()

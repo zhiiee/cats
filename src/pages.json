@@ -19,6 +19,15 @@
         "backgroundColor": "#F7F2EE",
         "navigationBarBackgroundColor": "#F7F2EE"
       }
+    },
+    {
+      "path": "pages/cats-admin/cats-admin",
+      "style": {
+        "navigationBarTitleText": "我的上报",
+        "navigationStyle": "default",
+        "backgroundColor": "#F7F2EE",
+        "navigationBarBackgroundColor": "#F7F2EE"
+      }
     }
   ],
   "globalStyle": {
@@ -34,7 +43,7 @@
     "list": [
       {
         "pagePath": "pages/home/home",
-        "text": "猫猫"
+        "text": "猫咪"
       },
       {
         "pagePath": "pages/science/science",

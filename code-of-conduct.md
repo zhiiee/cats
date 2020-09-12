@@ -63,6 +63,10 @@ src
 │
 ├── components                             // 组件都写在这个目录
 │   │
+│   ├── action-tool
+│   │  │
+│   │  └── action-tool.vue                 // 行为操作工具组件
+│   │
 │   ├── article-view
 │   │  │
 │   │  └── article-view.vue                // 文章组件
@@ -109,6 +113,10 @@ src
 │   │  │
 │   │  └── detail.vue                      // 猫咪详情
 │   │
+│   ├── cats-admin
+│   │  │
+│   │  └── cats-admin.vue                  // 我的上报管理页面
+│   │
 │   ├── home
 │   │  │
 │   │  └── home.vue                        // 猫咪列表页面（主页）
@@ -122,6 +130,8 @@ src
 │      └── science.vue                     // 科普页面
 │
 ├── plugins                                // 第三方库都放到这里(按名称区分)
+│   │
+│   ├── iconfont                           // 阿里巴巴矢量图标
 │   │
 │   └── jyf-parser                         // jin-yufeng/Parser 小程序富文本插件
 │

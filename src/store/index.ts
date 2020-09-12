@@ -12,7 +12,15 @@ export default new Vuex.Store({
     navigationHeight: 0,
     userInfo: undefined,
     catTypes: [],
-    scienceTypes: []
+    scienceTypes: [],
+    tools: [
+      {
+        icon: 'cats-admin',
+        title: '我的上报',
+        levels: [0, 1, 2, 3],
+        page: '/pages/cats-admin/cats-admin'
+      }
+    ]
   },
   mutations: {
     /**
