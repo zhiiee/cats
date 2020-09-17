@@ -10,18 +10,22 @@ class CatsService extends BaseService {
    * @param {*} context
    */
   async list (data, context) {
-    const { type, admin, pageIndex, pageSize } = data
+    const { type, name, pageIndex, pageSize } = data
     let collection = db.collection('cats')
     let where = {
+      isHide: _.neq(true),
       isDelete: _.neq(true)
     }
-    let isWhere = type !== null && type !== undefined && type.length > 0
-    if (isWhere) {
+    let isType = type !== null && type !== undefined && type.length > 0
+    if (isType) {
       where.type = type
     }
-    let isAdmin = admin !== null && admin !== undefined && admin === true
-    if (!isAdmin) {
-      where.isHide = _.neq(true)
+    let isName = name !== null && name !== undefined && name.length > 0
+    if (isName) {
+      where.name = new db.RegExp({
+        regexp: name,
+        options: 'i',
+      })
     }
 
     if (pageSize && pageSize !== -1) {

@@ -7,8 +7,8 @@ export default class CatsService extends BaseService {
   /**
    * 猫咪列表
    */
-  async list ({ type, pageIndex, pageSize }: any) {
-    const result: any = await this.callFunction('cats', 'list', { type, pageIndex, pageSize })
+  async list ({ type, name, pageIndex, pageSize }: any) {
+    const result: any = await this.callFunction('cats', 'list', { type, name, pageIndex, pageSize })
     if (result.code === 0) {
       return result.data.map((cat: any) => {
         return this.parseItem(cat)

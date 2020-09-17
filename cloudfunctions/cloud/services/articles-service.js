@@ -10,15 +10,12 @@ class ArticlesService extends BaseService {
    * @param {*} context
    */
   async get (data, context) {
-    const { code, admin } = data
+    const { code } = data
     let collection = db.collection('articles')
     let where = {
+      isHide: _.neq(true),
       isDelete: _.neq(true),
       code: code
-    }
-    let isAdmin = admin !== null && admin !== undefined && admin === true
-    if (!isAdmin) {
-      where.isHide = _.neq(true)
     }
 
     let result = await collection

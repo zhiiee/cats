@@ -41,7 +41,12 @@
   },
   "quickapp": {},
   "mp-weixin": {
-    "usingComponents": true
+    "usingComponents": true,
+    "permission": {
+      "scope.userLocation": {
+        "desc": "你的位置信息将用于快速定位流浪猫位置"
+      }
+    }
   },
   "mp-alipay": {
     "usingComponents": true

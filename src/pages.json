@@ -28,6 +28,15 @@
         "backgroundColor": "#F7F2EE",
         "navigationBarBackgroundColor": "#F7F2EE"
       }
+    },
+    {
+      "path": "pages/add-cat/add-cat",
+      "style": {
+        "navigationBarTitleText": "上报猫咪",
+        "navigationStyle": "default",
+        "backgroundColor": "#F7F2EE",
+        "navigationBarBackgroundColor": "#F7F2EE"
+      }
     }
   ],
   "globalStyle": {

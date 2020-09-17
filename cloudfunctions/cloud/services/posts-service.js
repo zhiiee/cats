@@ -1,26 +1,21 @@
 const BaseService = require('./base-service.js')
 
 /**
- * 分类相关接口
+ * 提交相关接口
  */
-class CategoriesService extends BaseService {
+class PostsService extends BaseService {
   /**
-   * 查询分类列表
+   * 根据openid查询上报列表
    * @param {*} data
    * @param {*} context
    */
   async list (data, context) {
-    // type 1：品种、2：属性、3：科普
-    const { type, pageIndex, pageSize } = data
-    let collection = db.collection('categories')
+    const { pageIndex, pageSize } = data
+    let collection = db.collection('posts')
     let where = {
+      openId: context.OPENID,
       isHide: _.neq(true),
       isDelete: _.neq(true)
-    }
-
-    let isWhere = type !== null && type !== undefined && type !== 0
-    if (isWhere) {
-      where.type = type
     }
 
     if (pageSize && pageSize !== -1) {
@@ -32,10 +27,12 @@ class CategoriesService extends BaseService {
     let result = await collection
       .where(where)
       .field({
-        code: true,
-        name: true
+        _id: true,
+        name: true,
+        desc: true,
+        avatar: true
       })
-      .orderBy('seq', 'asc')
+      .orderBy('updateTime', 'desc')
       .get()
       .then(result => this.success(result.data))
       .catch(() => this.fail([]))
@@ -54,4 +51,4 @@ class CategoriesService extends BaseService {
   }
 }
 
-module.exports = CategoriesService
+module.exports = PostsService

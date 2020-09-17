@@ -2,8 +2,8 @@
   <page-main :status="status" :refresherTriggered="refresherTriggered"
     @scrolltolower="onScrolltolower"
     @refresherrefresh="onRefresherrefresh"
-    @refresherrestore="onRefresherrestore"
     @refresherpulling="onRefresherpulling"
+    @refresherrestore="onRefresherrestore"
     emtpyMessage="猫咪出去玩了 请改天再来"
   >
     <view class="cat-content">
@@ -30,10 +30,6 @@ export default class CatList extends Vue {
   @Prop({ type: Boolean, default: false })
   isInit!: boolean
 
-  // 开启下来刷新
-  @Prop({ type: Boolean, default: true })
-  refresherEnabled!: boolean
-
   // 下拉刷新状态
   @Provide()
   refresherTriggered = false
@@ -51,8 +47,8 @@ export default class CatList extends Vue {
   pageIndex = 1
 
   // 页大小
-  @Prop({ type: Number, default: 10 })
-  pageSize!: number
+  @Provide()
+  pageSize = 10
 
   // 是否加载更多
   @Provide()
@@ -87,16 +83,15 @@ export default class CatList extends Vue {
     this.isLoading = true
     const items = await this.getCatList({
       type: this.type,
-      pageIndex: isRefresh ? 1 : this.pageIndex,
+      pageIndex: this.pageIndex,
       pageSize: this.pageSize
     })
     this.isLoading = false
     if (items !== -1) {
       if (items.length) {
+        this.pageIndex++
         if (isRefresh) {
           this.items = []
-        } else {
-          this.pageIndex++
         }
         for (const item of items) {
           this.items.push(item)
@@ -129,6 +124,7 @@ export default class CatList extends Vue {
    * 触发下拉事件
    */
   async onRefresherrefresh () {
+    this.pageIndex = 1
     await this.loadData(true)
     this.refresherTriggered = false
   }

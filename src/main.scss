@@ -1,4 +1,6 @@
 @import "./plugins/iconfont/iconfont.css";
+@import "./plugins/colorui/main.css";
+@import "./plugins/colorui/icon.css";
 
 page {
   position: fixed;
@@ -9,4 +11,67 @@ page {
   width: 0;
   height: 0;
   color: transparent;
+}
+
+// 覆盖ColorUi样式
+body {
+  font-size: unset;
+  font-family: unset;
+}
+
+.cu-form-group {
+  .title {
+    width: 120rpx;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  input {
+    font-size: 28rpx;
+  }
+
+  picker {
+    .picker {
+      text-align: left;
+    }
+  }
+}
+
+.cu-list {
+  .cu-avatar-group {
+    width: 540rpx;
+    direction: ltr;
+  }
+}
+
+.bg-white {
+  color: #000000;
+}
+
+.cu-modal {
+  z-index: -1;
+  // 动画有bug 暂时去掉
+  transition: none;
+
+  &.show {
+    z-index: 1110;
+  }
+
+  .padding-xl {
+    padding: 20rpx 30rpx;
+
+    .cu-form-group {
+      border: none;
+      margin-top: 10rpx;
+
+      &:first-child {
+        margin-top: 0rpx;
+      }
+
+      input {
+        padding: 0;
+      }
+    }
+  }
 }
