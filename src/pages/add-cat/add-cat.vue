@@ -52,14 +52,10 @@
         <!-- 关系 -->
         <view class="cu-list menu margin-top">
           <view class="cu-item arrow" @click="showSelectRelations">
-            <view class="content">
-              关系
-            </view>
+            <view class="content">关系</view>
             <view class="content">
               <view class="cu-avatar-group">
-                <view class="cu-avatar round sm" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg);"></view>
-                <view class="cu-avatar round sm" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big81005.jpg);"></view>
-                <view class="cu-avatar round sm" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big25002.jpg);"></view>
+                <image v-for="(relation, index) of relations" :key="index" class="cu-avatar round sm" :src="relation.avatar"/>
               </view>
             </view>
           </view>
@@ -131,7 +127,8 @@
               @refresherrestore="onRefresherrestore">
               <view class="grid col-3 padding-sm">
                 <view v-for="(cat, index) in cats" class="padding-xs" :key="index">
-                  <button class="cu-btn orange lg block relation" :class="cat.checked ? 'bg-orange' : 'line-orange'" @click="ChooseCheckbox" :data-value="cat._id">
+                  <button class="cu-btn orange lg block relation" :class="relations[cat.id] !== undefined ? 'bg-orange' : 'line-orange'"
+                    :data-index="index" @click="selectRelations">
                     <view class="relation-avatar">
                       <image :src="cat.avatar"/>
                     </view>
@@ -220,7 +217,7 @@ export default class AddCat extends Vue {
   attributeValue = ''
 
   @Provide()
-  relations: Array<any> = []
+  relations: any = {}
 
   @Provide()
   searchName = ''
@@ -496,6 +493,25 @@ export default class AddCat extends Vue {
       }
     } else {
       this.status = 1
+    }
+  }
+
+  /**
+   * 选择关系
+   */
+  selectRelations (event: any) {
+    const { index } = event.currentTarget.dataset
+    // 此处未触发视图更新 临时解决办法 有空再研究下为什么 可能是深拷贝的问题
+    const temp = this.cats
+    this.cats = []
+    this.cats = temp
+    // 根据当前点击的下标获取当前点击的猫咪
+    const cat = this.cats[index]
+    // 需要判断是选择还是取消
+    if (this.relations[cat.id] === undefined) {
+      this.relations[cat.id] = cat
+    } else {
+      delete this.relations[cat.id]
     }
   }
 
