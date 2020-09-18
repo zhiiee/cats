@@ -40,7 +40,7 @@
           <view class="action">属性</view>
           <view class="action">
             <button class="cu-btn round line-orange" @click="showAddAttribute">
-              <text class="cuIcon-add"></text>添加
+              <text class="cuIcon-add"/>添加
             </button>
           </view>
         </view>
@@ -66,13 +66,13 @@
         </view>
         <view class="cu-form-group photo-view">
           <view class="grid col-4 grid-square flex-sub">
-            <!-- <view class="bg-img" v-for="(item,index) in imgList" :key="index" @tap="ViewImage" :data-url="imgList[index]">
-              <image :src="imgList[index]" mode="aspectFill"></image>
-              <view class="cu-tag bg-red" @tap.stop="DelImg" :data-index="index">
-                <text class='cuIcon-close'></text>
+            <view class="bg-img" v-for="(item, index) in photos" :key="index" :data-index="index" @click="showPhotos">
+              <image :src="item" mode="aspectFill"/>
+              <view class="cu-tag bg-red" :data-index="index" @click.stop="deletePhotos">
+                <text class='cuIcon-close'/>
               </view>
-            </view> -->
-            <view class="solids">
+            </view>
+            <view class="solids" @click="selectPhotos">
               <text class='cuIcon-cameraadd'/>
             </view>
           </view>
@@ -87,7 +87,7 @@
           <view class="cu-bar bg-white justify-end">
             <view class="content">添加属性</view>
             <view class="action" @click="hideAddAttribute(false)">
-              <text class="cuIcon-close text-red"></text>
+              <text class="cuIcon-close text-red"/>
             </view>
           </view>
           <view class="padding-xl">
@@ -114,7 +114,7 @@
           <view class="select-relations">
             <view class="cu-bar search bg-white">
               <view class="search-form round">
-                <text class="cuIcon-search"></text>
+                <text class="cuIcon-search"/>
                 <input type="text" placeholder="根据名字搜索" confirm-type="search" :value="searchName" @input="searchNameInput" @blur="searchConfirm"/>
               </view>
             </view>
@@ -251,6 +251,9 @@ export default class AddCat extends Vue {
 
   @Provide()
   cats: Array<any> = []
+
+  @Provide()
+  photos: Array<any> = []
 
   get types () {
     return this.$store.state.catTypes.map((type: any) => {
@@ -550,6 +553,46 @@ export default class AddCat extends Vue {
    */
   hideSelectRelations () {
     this.selectRelationsStatus = false
+  }
+
+  /**
+   * 选择照片
+   */
+  selectPhotos () {
+    uni.chooseImage({
+      sizeType: ['compressed'],
+      sourceType: ['album', 'camera'],
+      success: result => {
+        this.photos = this.photos.concat(result.tempFilePaths)
+      }
+    })
+  }
+
+  /**
+   * 查看照片
+   */
+  showPhotos (event: any) {
+    const { index } = event.currentTarget.dataset
+    uni.previewImage({
+      urls: this.photos,
+      current: index
+    })
+  }
+
+  /**
+   * 删除照片
+   */
+  deletePhotos (event: any) {
+    const { index } = event.currentTarget.dataset
+    uni.showModal({
+      title: '提示',
+      content: '确定要删除这张照片吗？',
+      success: result => {
+        if (result.confirm) {
+          this.photos.splice(index, 1)
+        }
+      }
+    })
   }
 
   saveCat () {
