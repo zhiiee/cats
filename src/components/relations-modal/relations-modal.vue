@@ -146,7 +146,11 @@ export default class RelationsModal extends Vue {
           this.cats = []
         }
         for (const cat of cats) {
-          this.cats.push(cat)
+          this.cats.push({
+            id: cat.id,
+            name: cat.name,
+            avatar: cat.avatar
+          })
         }
         this.isLoadMore = cats.length === this.pageSize
         this.status = 2

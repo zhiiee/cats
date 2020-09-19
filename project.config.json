@@ -7,7 +7,7 @@
     "urlCheck": true
   },
   "compileType": "miniprogram",
-  "libVersion": "2.11.0",
+  "libVersion": "2.12.0",
   "appid": "wxc7154750226a7309",
   "projectname": "cats",
   "condition": {

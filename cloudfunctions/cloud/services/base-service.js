@@ -1,3 +1,5 @@
+const got = require('got')
+
 class BaseService {
   /**
    * 调用成功
@@ -24,6 +26,14 @@ class BaseService {
       createTime: dateTime,
       updateTime: dateTime
     }
+  }
+
+  /**
+   * 下载文件
+   * @param {*} url
+   */
+  async downloadFile (url) {
+    return (await got(url, { responseType: 'buffer' })).body
   }
 }
 

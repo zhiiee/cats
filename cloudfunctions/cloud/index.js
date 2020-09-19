@@ -3,6 +3,7 @@ const Users = require('./services/users-service')
 const Categories = require('./services/categories-service')
 const Cats = require('./services/cats-service')
 const Articles = require('./services/articles-service')
+const Security = require('./services/security-service')
 const Posts = require('./services/posts-service')
 
 // Api 对象
@@ -11,6 +12,7 @@ const api = {
   categories: new Categories(),
   cats: new Cats(),
   articles: new Articles(),
+  security: new Security(),
   posts: new Posts()
 }
 

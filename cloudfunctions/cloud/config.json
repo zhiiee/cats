@@ -1,5 +1,9 @@
 {
   "permissions": {
-    "openapi": []
+    "openapi": [
+      "security.msgSecCheck",
+      "security.imgSecCheck",
+      "subscribeMessage.send"
+    ]
   }
 }

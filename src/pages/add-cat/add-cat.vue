@@ -4,7 +4,7 @@
       <scroll-view :scroll-y="true" style="height: calc(100vh - 140rpx - env(safe-area-inset-bottom));">
         <!-- 头像 -->
         <view class="avatar">
-          <img :src="avatar" mode="scaleToFill"/>
+          <img :src="avatar" mode="scaleToFill" @click="checkAvtater"/>
           <view class="avatar-edit iconfont icon-camera" @click="checkAvtater"/>
         </view>
         <!-- 名字 -->
@@ -24,7 +24,7 @@
         <!-- 位置 -->
         <view class="cu-form-group">
           <view class="title">位置</view>
-          <input class="location" placeholder="为了保护流浪猫 位置信息会隐藏显示" :disabled="true" :value="location" @click="changeLocation"/>
+          <input class="location" placeholder="为了保护流浪猫 位置信息会隐藏显示" :disabled="true" :value="location.name" @click="changeLocation"/>
           <text class='cuIcon-locationfill text-orange' @click="changeLocation"/>
         </view>
         <!-- 描述 -->
@@ -82,9 +82,12 @@
           </view>
         </view>
       </scroll-view>
+      <!-- 提交蒙版 -->
+      <view v-if="submitStatus" class="submit-modal"/>
       <!-- 提交按钮 -->
       <view class="buttons padding">
-        <button class="cu-btn block bg-orange lg" @click="saveCat">提交审核</button>
+        <button class="cu-btn block bg-orange lg" @click="submitCheck" v-if="submitStatus === false">提交初审</button>
+        <button class="cu-btn block bg-orange lg" @click="submitCat" v-if="submitStatus === true">提交管理员审核</button>
       </view>
       <!-- 头像裁剪 -->
       <image-cropper :path="avtaterTempFilePath" cropperWidth="260" cropperHeight="260" @confirm="avtaterCropperConfirm"/>
@@ -105,7 +108,7 @@ import PageStatus from '@/components/page-status/page-status.vue'
 import ImageCropper from '@/components/image-cropper/image-cropper.vue'
 import AttributeModal from '@/components/attribute-modal/attribute-modal.vue'
 import RelationsModal from '@/components/relations-modal/relations-modal.vue'
-import { Categories } from '@/api'
+import { Categories, Security, Posts } from '@/api'
 
 @Component({
   name: 'AddCat',
@@ -114,10 +117,6 @@ import { Categories } from '@/api'
 export default class AddCat extends Vue {
   @Provide()
   isError = false
-
-  // 表单数据
-  @Provide()
-  form = {}
 
   // 头像
   @Provide()
@@ -141,7 +140,7 @@ export default class AddCat extends Vue {
 
   // 位置
   @Provide()
-  location = ''
+  location: any = {}
 
   // 纬度
   @Provide()
@@ -187,6 +186,15 @@ export default class AddCat extends Vue {
   @Provide()
   photos: Array<any> = []
 
+  @Provide()
+  checkPhotos: Array<any> = []
+
+  @Provide()
+  checkItems: Array<any> = []
+
+  @Provide()
+  submitStatus = false
+
   // 分类列表
   get types () {
     return this.$store.state.catTypes.map((type: any) => {
@@ -199,10 +207,8 @@ export default class AddCat extends Vue {
     return uni.getSystemInfoSync().windowWidth * 0.8
   }
 
-  /**
-   * 获取猫咪属性列表
-   */
-  async created () {
+  async onLoad () {
+    // 获取猫咪属性列表
     this.attributes = []
     const attributes = await Categories.list({ type: 2 })
     if (attributes === -1) {
@@ -272,7 +278,7 @@ export default class AddCat extends Vue {
       latitude: this.latitude,
       longitude: this.longitude,
       success: result => {
-        this.location = result.name
+        this.location = result
       }
     })
   }
@@ -412,42 +418,255 @@ export default class AddCat extends Vue {
     })
   }
 
-  saveCat () {
-    if (!this.avatar) {
+  /**
+   * 提交初审
+   */
+  async submitCheck () {
+    // 表单校验
+    if (this.validation()) {
+      uni.showLoading({
+        mask: true,
+        title: '初审中...'
+      })
+      // 安全检查
+      if (await this.securityCheck()) {
+        this.submitStatus = true
+        uni.showToast({
+          mask: true,
+          icon: 'success',
+          title: '初审通过',
+          duration: 3000
+        })
+      }
+    }
+  }
+
+  /**
+   * 表单校验
+   */
+  validation () {
+    if (this.isEmpty(this.avatar)) {
       this.showError('上传一个猫咪的头像')
       return false
     }
-    if (!this.name) {
+
+    if (this.isEmpty(this.name)) {
       this.showError('给猫咪起个名字')
       return false
     }
-    if (!this.type) {
+
+    if (this.isEmpty(this.type)) {
       this.showError('选择一个猫咪的花色分类')
       return false
     }
-    if (!this.desc) {
+
+    if (this.isEmpty(this.location.name)) {
+      this.showError('选择一下猫咪的位置')
+      return false
+    }
+
+    if (this.isEmpty(this.desc)) {
       this.showError('简单描述一下这只猫咪')
       return false
     }
-    if (!this.cover) {
+
+    if (this.isEmpty(this.cover)) {
       this.showError('上传一个猫咪的封面图')
       return false
     }
-    this.form = {
-      avatar: this.avatar,
-      name: this.name,
-      type: this.type,
-      desc: this.desc,
-      cover: this.cover,
-      items: this.items
+
+    if (this.items.length < this.attributes.length) {
+      this.showError('属性信息要填写完整')
+      return false
     }
-    console.log(this.form)
+
+    for (const item of this.items) {
+      if (this.isEmpty(item.content)) {
+        this.showError('属性信息要填写完整')
+        return false
+      }
+    }
+    return true
   }
 
+  /**
+   * 安全检查
+   */
+  async securityCheck () {
+    const avatarCheckResult = await this.imageSecurityCheck(this.avatar)
+    if (avatarCheckResult === false) {
+      this.showError('头像不合法请修改')
+      return false
+    } else if (avatarCheckResult !== true) {
+      this.avatar = avatarCheckResult
+    }
+
+    if (!await this.contentSecurityCheck(this.name)) {
+      this.showError('名字不合法请修改')
+      return false
+    }
+
+    if (!await this.contentSecurityCheck(this.desc)) {
+      this.showError('描述不合法请修改')
+      return false
+    }
+
+    const coverCheckResult = await this.imageSecurityCheck(this.cover)
+    if (coverCheckResult === false) {
+      this.showError('封面不合法请修改')
+      return false
+    } else if (coverCheckResult !== true) {
+      this.cover = coverCheckResult
+    }
+
+    await this.itemsSecurityCheck()
+    if (this.checkItems.length !== this.items.length) {
+      this.showError('属性不合法请修改')
+      return false
+    }
+
+    await this.photosSecurityCheck()
+    if (this.checkPhotos.length !== this.photos.length) {
+      this.showError('照片不合法请修改')
+      return false
+    }
+    return true
+  }
+
+  /**
+   * 图片安全检查
+   */
+  async imageSecurityCheck (image: string) {
+    if (image.indexOf('cloud://') !== -1) {
+      return true
+    } else {
+      const result = await Security.imgSecCheck(image)
+      if (result.status === 0) {
+        console.log('图片检查合法', image)
+        return result.url
+      } else {
+        console.log('图片检查不合法', image)
+        return false
+      }
+    }
+  }
+
+  /**
+   * 检查照片
+   */
+  async photosSecurityCheck () {
+    if (this.photos.length > 0) {
+      this.checkPhotos = []
+      await this.photoSecurityCheck(this.photos[0], 0)
+    }
+  }
+
+  /**
+   * 递归检查照片
+   */
+  async photoSecurityCheck (photo: any, index: number) {
+    const photoCheckResult = await this.imageSecurityCheck(photo)
+    if (photoCheckResult !== false) {
+      this.checkPhotos.push(photo)
+      if (photoCheckResult !== true) {
+        this.photos[index] = photoCheckResult
+      }
+    }
+    if (this.photos.length > index + 1) {
+      await this.photoSecurityCheck(this.photos[index + 1], index + 1)
+    }
+  }
+
+  /**
+   * 文本安全检查
+   */
+  async contentSecurityCheck (content: string) {
+    const result = await Security.msgSecCheck(content)
+    if (result.status === 0) {
+      console.log('文本检查合法', content)
+      return true
+    } else {
+      console.log('文本检查不合法', content)
+      return false
+    }
+  }
+
+  /**
+   * 检查属性
+   */
+  async itemsSecurityCheck () {
+    this.checkItems = []
+    await this.itemSecurityCheck(this.items[0], 0)
+  }
+
+  /**
+   * 递归检查属性
+   */
+  async itemSecurityCheck (item: any, index: number) {
+    if (await this.contentSecurityCheck(item.category) && await this.contentSecurityCheck(item.content)) {
+      this.checkItems.push(item)
+    }
+    if (this.items.length > index + 1) {
+      await this.itemSecurityCheck(this.items[index + 1], index + 1)
+    }
+  }
+
+  /**
+   * 判断是否为空
+   */
+  isEmpty (val: string) {
+    if (val === null || val === undefined || val.length === 0) {
+      return true
+    }
+    return false
+  }
+
+  /**
+   * 显示错误信息
+   */
   showError (title: string) {
     uni.showToast({
       icon: 'none',
-      title: title
+      title: title,
+      duration: 3000
+    })
+  }
+
+  /**
+   * 提交猫咪信息
+   */
+  submitCat () {
+    uni.requestSubscribeMessage({
+      tmplIds: ['rrPousHxOgv-Lf5vQMry8xa5CjspYVzfYCjXxFA-ZmI'],
+      complete: async (result: any) => {
+        console.log(result)
+        uni.showLoading({
+          mask: true,
+          title: '提交中...'
+        })
+        let subscribe = false
+        if (result['rrPousHxOgv-Lf5vQMry8xa5CjspYVzfYCjXxFA-ZmI'] === 'accept') {
+          subscribe = true
+        }
+        const respone = await Posts.create({
+          avatar: this.avatar,
+          name: this.name,
+          type: this.type,
+          desc: this.desc,
+          cover: this.cover,
+          items: this.items,
+          relations: this.relations,
+          photos: this.photos,
+          subscribe: subscribe
+        })
+        if (respone !== -1) {
+          uni.navigateBack({
+            delta: 1
+          })
+        } else {
+          this.showError('发生错误 请重试')
+        }
+      }
     })
   }
 }
@@ -531,6 +750,17 @@ export default class AddCat extends Vue {
 
   .bar-border {
     border-bottom: 1rpx solid #EEEEEE;
+  }
+
+  .submit-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 140rpx - env(safe-area-inset-bottom));
+    opacity: 0.8;
+    z-index: 9999;
+    background-color: #F7F2EE;
   }
 
   .buttons {

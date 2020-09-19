@@ -6,6 +6,9 @@
   "license": "GPL-3.0",
   "main": "index.js",
   "dependencies": {
+    "got": "^11.7.0",
+    "images": "^3.2.3",
+    "uuid": "^8.3.0",
     "wx-server-sdk": "~2.2.0"
   }
 }

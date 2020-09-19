@@ -350,7 +350,7 @@ export default class ImageCropper extends Vue {
       uni.canvasToTempFilePath({
         canvasId: 'cropper-canvas',
         destWidth: this.cropperWidth,
-        destHeight: this.cropperWidth,
+        destHeight: this.cropperHeight,
         fileType: 'jpg',
         success: (result: any) => {
           const path = result.tempFilePath
@@ -509,10 +509,8 @@ export default class ImageCropper extends Vue {
     display: flex;
     position: fixed;
     left: 0;
-    bottom: env(safe-area-inset-bottom);
+    bottom: 0;
     width: 100%;
-    height: 96rpx;
-    line-height: 96rpx;
     font-size: 36rpx;
     z-index: 9999;
     background-color: #FFFFFF;
@@ -520,8 +518,9 @@ export default class ImageCropper extends Vue {
 
     .cropper-button-item {
       display: block;
-      position: relative;
       flex: 1;
+      height: 96rpx;
+      line-height: 96rpx;
       color: #FF7F50;
       text-align: center;
       text-decoration: none;
