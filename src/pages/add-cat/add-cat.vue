@@ -82,12 +82,12 @@
           </view>
         </view>
       </scroll-view>
-      <!-- 审核按钮 -->
+      <!-- 提交按钮 -->
       <view class="buttons padding">
         <button class="cu-btn block bg-orange lg" @click="saveCat">提交审核</button>
       </view>
       <!-- 头像裁剪 -->
-      <image-cropper :path="avtaterTempFilePath" cropperWidth="160" cropperHeight="160" @confirm="avtaterCropperConfirm"/>
+      <image-cropper :path="avtaterTempFilePath" cropperWidth="260" cropperHeight="260" @confirm="avtaterCropperConfirm"/>
       <!-- 封面裁剪 -->
       <image-cropper :path="coverTempFilePath" :cropperWidth="width" :cropperHeight="width * 0.8" @confirm="coverCropperConfirm"/>
       <!-- 添加属性模态框 -->
@@ -187,12 +187,14 @@ export default class AddCat extends Vue {
   @Provide()
   photos: Array<any> = []
 
+  // 分类列表
   get types () {
     return this.$store.state.catTypes.map((type: any) => {
       return type.name
     })
   }
 
+  // 封面最大宽度
   get width () {
     return uni.getSystemInfoSync().windowWidth * 0.8
   }

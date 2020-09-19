@@ -19,7 +19,7 @@
           @refresherrefresh="onRefresherrefresh"
           @refresherpulling="onRefresherpulling"
           @refresherrestore="onRefresherrestore">
-          <view class="grid col-3 padding-sm">
+          <view v-if="status === 2" class="grid col-3 padding-sm">
             <view v-for="(cat, index) in cats" class="padding-xs" :key="index">
               <button class="cu-btn orange lg block relation" :class="relations[cat.id] !== undefined ? 'bg-orange' : 'line-orange'"
                 :data-index="index" @click="selectRelations">
@@ -30,7 +30,7 @@
               </button>
             </view>
           </view>
-          <page-status v-if="status !== 2" :status="status"/>
+          <page-status v-if="status !== 2" :status="status" :message="getMessage()"/>
         </scroll-view>
         <view style="width: 100%; height: env(safe-area-inset-bottom); padding-top: 40rpx;"></view>
       </view>
@@ -101,6 +101,20 @@ export default class RelationsModal extends Vue {
     val.map(item => {
       this.relations[item.id] = item
     })
+  }
+
+  /**
+   * 消息 0: 加载中 1: 加载失败 2: 加载成功 3: 没数据
+   */
+  getMessage () {
+    switch (this.status) {
+      case 0:
+        return '呼叫喵星中...'
+      case 1:
+        return '喵星信号中断'
+      case 3:
+        return '猫咪出去玩了 请改天再来'
+    }
   }
 
   /**

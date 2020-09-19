@@ -1,11 +1,14 @@
 <template>
-  <view class="image-cropper" v-show="show">
+  <view class="image-cropper" v-show="show" :style="{
+      width: `${windowWidth}px`,
+      height: `calc(${windowHeight}px - env(safe-area-inset-bottom))`
+    }">
     <!-- 图片 -->
     <view class="cropper-box">
       <view class="cropper-box-image"
         @touchstart.stop.prevent="imageTouchStart"
-        @touchmove.stop.prevent="imageMove"
-        @touchend.stop.prevent="imageMoveEnd"
+        @touchmove.stop.prevent="imageTouchMove"
+        @touchend.stop.prevent="imageTouchEnd"
         :style="{
           width: `${imageWidth}px`,
           height: `${imageHeight}px`,
@@ -43,8 +46,8 @@
 
     <!-- 设置 -->
     <view class="cropper-setting-group">
-      <view class="cropper-setting-button reset-button" @click="init"/>
-      <view class="cropper-setting-button rotate-button" @click="rotateCropper"/>
+      <view class="cropper-setting-button iconfont icon-reset" @click="init"/>
+      <view class="cropper-setting-button iconfont icon-rotate" @click="rotateImage"/>
     </view>
 
     <!-- 按钮 -->
@@ -53,6 +56,7 @@
       <view class="cropper-button-item" @click="confirm">确定</view>
     </view>
 
+    <!-- 绘图Canvas -->
     <canvas canvas-id="cropper-canvas" class="cropper-canvas"
       :style="{
         width: `${currentCropperWidth}px`,
@@ -63,7 +67,6 @@
 
 <script lang="ts">
 import { Component, Prop, Provide, Watch, Vue } from 'vue-property-decorator'
-const { windowWidth = 0, windowHeight = 0 } = uni.getSystemInfoSync()
 
 @Component({
   name: 'ImageCropper'
@@ -72,39 +75,43 @@ export default class ImageCropper extends Vue {
   @Prop({ type: String })
   path!: string
 
-  @Prop({ type: Number, default: 160 })
+  // 裁剪框宽度
+  @Prop({ type: Number, default: 260 })
   cropperWidth!: number
 
-  @Prop({ type: Number, default: 160 })
+  // 裁剪框高度
+  @Prop({ type: Number, default: 260 })
   cropperHeight!: number
 
+  // 导出文件类型
   @Prop({ type: String })
   type!: string
 
+  // 显示状态
   @Provide()
   show = false
 
+  // 缩放比例
   @Provide()
   scale = 1
 
+  // 旋转角度
   @Provide()
   rotate = 0
 
+  // 当前裁剪框宽度
   @Provide()
   currentCropperWidth = 0
 
+  // 当前裁剪框高度
   @Provide()
   currentCropperHeight = 0
 
-  @Provide()
-  cropperOldWidth = 0
-
-  @Provide()
-  cropperOldHeight = 0
-
+  // 图片真实宽度
   @Provide()
   imageRealWidth = 0
 
+  // 图片真实高度
   @Provide()
   imageRealHeight = 0
 
@@ -139,19 +146,14 @@ export default class ImageCropper extends Vue {
   @Provide()
   oldScale = 1
 
-  // 容器高度
-  get containerHeight () {
-    return windowHeight - 48
-  }
-
   // 屏幕宽度
   get windowWidth () {
-    return windowWidth
+    return uni.getSystemInfoSync().windowWidth
   }
 
   // 屏幕高度
   get windowHeight () {
-    return windowHeight
+    return uni.getSystemInfoSync().windowHeight - 48
   }
 
   // 图片宽高比
@@ -179,14 +181,20 @@ export default class ImageCropper extends Vue {
     }
   }
 
+  /**
+   * 初始化
+   */
   init () {
-    this.rotate = 0
     this.scale = 1
+    this.rotate = 0
     this.currentCropperWidth = this.cropperWidth
     this.currentCropperHeight = this.cropperHeight
     this.loadImage()
   }
 
+  /**
+   * 加载图片
+   */
   loadImage () {
     uni.showLoading({
       title: '图片加载中...'
@@ -202,7 +210,7 @@ export default class ImageCropper extends Vue {
 
         this.$nextTick(() => {
           this.x = this.windowWidth / 2 - this.imageWidth / 2
-          this.y = this.containerHeight / 2 - this.imageHeight / 2
+          this.y = this.windowHeight / 2 - this.imageHeight / 2
         })
 
         this.show = true
@@ -210,7 +218,6 @@ export default class ImageCropper extends Vue {
       },
       fail: () => {
         this.show = false
-        uni.hideLoading()
         uni.showModal({
           title: '提示',
           content: '图片加载失败'
@@ -237,7 +244,7 @@ export default class ImageCropper extends Vue {
     }
   }
 
-  imageMove (event: any) {
+  imageTouchMove (event: any) {
     if (this.scaling) {
       let scale = this.oldScale
 
@@ -277,12 +284,15 @@ export default class ImageCropper extends Vue {
     }
   }
 
-  imageMoveEnd () {
+  imageTouchEnd () {
     setTimeout(() => {
       this.scaling = false
     }, 100)
   }
 
+  /**
+   * 旋转图片
+   */
   rotateCropper () {
     if (this.rotate === 3) {
       this.rotate = 0
@@ -353,7 +363,6 @@ export default class ImageCropper extends Vue {
           this.$emit('confirm', cropperImage)
         },
         fail: () => {
-          uni.hideLoading()
           uni.showModal({
             title: '提示',
             content: '裁剪失败'
@@ -366,37 +375,30 @@ export default class ImageCropper extends Vue {
 </script>
 
 <style lang="scss">
-@font-face {
-  font-family: "iconfont";
-  src: url('data:application/x-font-woff2;charset=utf-8;base64,d09GMgABAAAAAAR4AAsAAAAACKgAAAQsAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHEIGVgCDBgqEfIRGATYCJAMMCwgABCAFhG0HShugB8gOJUHBwAAAAAFEBNmwzd4dtatSmmpFoVAEhUThEAYkCozFKDCqCVO6RfH/89v869awDnTR1qrSANFt4GG4SNxreBn91fmV9f3+53J613ieHba+N1zmGM8PA7oXTaCAxpjei8IoLWFsGLu4jPME6vWJJdovqmgAO4U2LRBnep0K7GJmpYQWanXVOWuLuAFrtenK4haAa/f38QnKsCOpyrRFh6eFWsh5KXnfYcn958BGQNKfE8wmMmaAQpzkuo9Z+ukZluoltVV5abUipL5i/ysArlhWVut/eCRBVNPUjYg6oUo7JTHFoaYDSvdacnKTq9GAB4AY5y2dtL3qpFh1DENdnJC6Hq+xYb7pyRMDMzc/fYoJjY8flwO3m98rMucF+IZHj6Cagw5UeKpxyFbt2rHGY/8jpa7CYMvLfcIesLjY3bdqhaf+nqgQs2qT/+rjCH/VfA0VFGuAC3iE8NEr/Vau8vZsXiUy7+V3c3tQQXMAuNjDCC89KDIHH0OFhnUi81GEPwyc7wZUaN7DnUf4g+ZLQsMKYV/94NjK7R7TEM4niTY1oJ5zEU62aNVaasUub08YLUEam5EnT6a61/I17dNk+vTu9jpJjXhsTFwjqTtpCBxBIIgS6iQnc/Zod1YGKp0rAwsD8kkyP6AwcK0hcAwkiQmBhWvxPZWKDu86aUH2nLEdi9rGX1eXq5P6A1SrnAucMVMdZH/GKi/jyfCqJyucfK3mXpVujXOPfFf5LC4Dvx0X/943JyOq4HuCTZ8KiIPPAb6ro8akpT6ufiq39BQrNlk5mp8pO0JlJLk8f5QalRjoP60IMx0N8n7wGhSD3n6/F1zlcTVz/cR+Ev0lkLSTd7UiPbD/wCxGRMA2Krwro2O0bTQtImbwhjAJc0S3N4ROx15/PH60IzaIOjCbEelqkDOfETNxb/FMixnWNzeJp2KPQw9A5d76jGUOQOUvH7RE/o2RfkNatd3OGf9q0QKbnq8WB7qy+hVqJRjJn1BQgP/iErks0yy5iGJTrOayW7C/z0IoZH0qNH+7N+31XXc7G2p1hZDU6IWs1ghaqDNQpcEKVKu1BfWmFW9u0IFhKUodpswCEFodgqTZHWStbqOF+hqqdPsG1VrDEuodhfueDcZCj+QzuIrFtZh6BNNraIowbCzi1dbhOlOfionKXHoTzgzoY5hCKk/minEKZ/pYMDCoU7IsgREM3Y8Vgcvwvj4aMzK0AdewUpJljWkyGZH3IKmG7gfEHgZOhYXTwqiNwOhp0CiE3ZiFpL5fB6dj0keFKcGV+JvgGAP0vWMUpOQ10GI1VQt3LoMHDNJRYrEIPInAoPXDFEEnrk9P0zDG/FEGOA2WFNkiaZRGhuoRddXS8bX917cL6mn9c6TIUXSekybKHKQfJXFq2KSiRklLYU8dNKWDIX0cAA==') format('woff2');
-}
-
 .image-cropper {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
   z-index: 998;
   box-sizing: border-box;
   background-color: #000000;
 
-  .cropper-box,
-  .cropper-box-image,
-  .cropper-drag-box,
-  .cropper-crop-box {
+  .cropper-box {
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 998;
-  }
-
-  .cropper-box {
+    width: 100%;
+    height: 100%;
+    z-index: 999;
     overflow: hidden;
 
     .cropper-box-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 999;
 
       .cropper-image {
         position: relative;
@@ -405,26 +407,41 @@ export default class ImageCropper extends Vue {
         transform: none;
         max-width: none;
         max-height: none;
-        z-index: 998;
+        z-index: 999;
       }
     }
-  }
-
-  .cropper-modal {
-    background: rgba(0, 0, 0, 0.5);
   }
 
   .pointer-events {
     pointer-events: none;
   }
 
+  .cropper-drag-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+
+    &.cropper-modal {
+      background: rgba(0, 0, 0, 0.5);
+    }
+  }
+
   .cropper-crop-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
 
     .cropper-view-box {
       display: block;
-      overflow: hidden;
       width: 100%;
       height: 100%;
+      overflow: hidden;
       outline: 4rpx solid #FFFFFF;
       outline-color: rgba(255, 255, 255, 0.75);
 
@@ -440,7 +457,7 @@ export default class ImageCropper extends Vue {
       width: 100%;
       height: 100%;
       opacity: 0.1;
-      z-index: 998;
+      z-index: 999;
 
       &.line-w {
         top: -6rpx;
@@ -471,84 +488,44 @@ export default class ImageCropper extends Vue {
   .cropper-setting-group {
     position: absolute;
     right: 60rpx;
-    bottom: calc(160rpx + env(safe-area-inset-bottom));
-    z-index: 998;
+    bottom: calc(60rpx + env(safe-area-inset-bottom));
+    z-index: 9999;
 
     .cropper-setting-button {
-      position: relative;
+      display: inline-block;
       width: 80rpx;
       height: 80rpx;
-      background: #FFFFFF;
+      font-size: 48rpx;
+      font-style: normal;
+      line-height: 80rpx;
+      text-align: center;
+      margin-left: 30rpx;
       border-radius: 40rpx;
-      display: inline-block;
-      padding: 20rpx;
-      margin-left: 20rpx;
-
-      &:active {
-        background: #CCCCCC;
-      }
-    }
-
-    .rotate-button {
-      font-family: "iconfont" !important;
-      font-size: 48rpx;
-      font-style: normal;
-      line-height: 40rpx;
-
-      &::before {
-        content: "\e65c";
-        margin-left: -4rpx;
-      }
-    }
-
-    .reset-button {
-      font-family: "iconfont" !important;
-      font-size: 48rpx;
-      font-style: normal;
-      line-height: 40rpx;
-
-      &::before {
-        content: "\e648";
-        margin-left: -4rpx;
-      }
+      background: #FFFFFF;
     }
   }
 
   .cropper-button-group {
-    position: absolute;
+    display: flex;
+    position: fixed;
+    left: 0;
+    bottom: env(safe-area-inset-bottom);
+    width: 100%;
+    height: 96rpx;
     line-height: 96rpx;
     font-size: 36rpx;
-    display: flex;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 998;
+    z-index: 9999;
     background-color: #FFFFFF;
     padding-bottom: env(safe-area-inset-bottom);
 
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      right: 0;
-      height: 2rpx;
-      border-top: 2rpx solid #D5D5D6;
-      color: #D5D5D6;
-      transform-origin: 0 0;
-      transform: scaleY(0.5);
-      z-index: 998;
-    }
-
     .cropper-button-item {
       display: block;
+      position: relative;
       flex: 1;
       color: #FF7F50;
-      text-decoration: none;
-      position: relative;
       text-align: center;
+      text-decoration: none;
       background-color: #FFFFFF;
-      z-index: 998;
 
       &:first-child {
         color: #000000;
@@ -556,20 +533,6 @@ export default class ImageCropper extends Vue {
         &::after {
           display:  none;
         }
-      }
-
-      &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        width: 2rpx;
-        border-left: 2rpx solid #D5D5D5;
-        color: #D5D5D5;
-        transform-origin: 0 0;
-        transform: scaleX(0.5);
-        z-index: 998;
       }
 
       &:active {
@@ -582,7 +545,7 @@ export default class ImageCropper extends Vue {
     position: absolute;
     top: -9999px;
     left: -9999px;
-    z-index: -998;
+    z-index: -9999;
   }
 }
 </style>
