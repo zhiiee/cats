@@ -13,7 +13,7 @@
       </view>
     </view>
     <view class="item-buttons">
-      <button class="item-button cu-btn round bg-orange" :disabled="item.status !== 0" @click.stop="goAddCat">编辑</button>
+      <button class="item-button cu-btn round bg-orange" :disabled="item.status === 0" @click.stop="goAddCat">编辑</button>
     </view>
   </view>
 </template>
@@ -45,7 +45,7 @@ export default class PostItem extends Vue {
   goCatDetail () {
     if (this.item.catId) {
       uni.navigateTo({
-        url: `/pages/detail/detail?id=${this.item.id}&title=${this.item.name}`
+        url: `/pages/detail/detail?id=${this.item.catId}&title=${this.item.name}`
       })
     }
   }

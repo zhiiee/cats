@@ -62,4 +62,28 @@ export default class PostsService extends BaseService {
     }
     return -1
   }
+
+  /**
+   * 获取待审核列表
+   */
+  async checkList ({ pageIndex, pageSize }: any) {
+    const result: any = await this.callFunction('posts', 'checkList', { pageIndex, pageSize })
+    if (result.code === 0) {
+      return result.data.map((post: any) => {
+        return this.parseItem(post)
+      })
+    }
+    return -1
+  }
+
+  /**
+   * 审核上报的信息
+   */
+  async check ({ id, action }: any) {
+    const result: any = await this.callFunction('posts', 'check', { id, action })
+    if (result.code === 0) {
+      return result.data
+    }
+    return -1
+  }
 }

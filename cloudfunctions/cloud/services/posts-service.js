@@ -143,6 +143,148 @@ class PostsService extends BaseService {
   }
 
   /**
+   * 获取待审核列表
+   * @param {*} data
+   * @param {*} context
+   */
+  async checkList (data, context) {
+    const { pageIndex, pageSize } = data
+    let collection = db.collection('posts')
+    let where = {
+      status: 0,
+      isHide: _.neq(true),
+      isDelete: _.neq(true)
+    }
+
+    if (pageSize && pageSize !== -1) {
+      collection = collection
+        .skip((pageIndex - 1) * pageSize)
+        .limit(pageSize)
+    }
+
+    let result = await collection
+      .where(where)
+      .field({
+        _id: true,
+        name: true,
+        desc: true,
+        avatar: true
+      })
+      .orderBy('updateTime', 'desc')
+      .get()
+      .then(result => this.success(result.data))
+      .catch(() => this.fail([]))
+
+    if (pageSize && pageSize !== -1) {
+      let total = await collection
+        .where(where)
+        .count()
+        .then(result => { return result.total })
+        .catch(() => { return -1 })
+
+      result.total = total
+    }
+
+    return { data: result }
+  }
+
+  /**
+   * 审核上报的信息
+   * @param {*} data
+   * @param {*} context
+   */
+  async check (data, context) {
+    const { id, action } = data
+    let collection = db.collection('posts')
+
+    // 查询上报的信息
+    let post = await collection
+      .doc(id)
+      .get()
+      .then(result => result.data)
+      .catch(() => {})
+
+    let updateData = {
+      status: -1,
+      updateTime: new Date().getTime()
+    }
+
+    let catId = post._id
+
+    if (action === 'confirm') {
+      // 复制到cats表
+      collection = db.collection('cats')
+      let cat = await collection
+        .add({
+          data: {
+            openId: post.openId,
+            avatar: post.avatar,
+            name: post.name,
+            type: post.type,
+            location: post.location,
+            desc: post.desc,
+            cover: post.cover,
+            items: post.items,
+            relations: post.relations,
+            photos: post.photos,
+            isHide: post.isHide,
+            isDelete: post.isDelete,
+            createTime: post.createTime,
+            updateTime: post.updateTime
+          }
+        })
+        .then(result => this.success(result._id))
+        .catch(() => this.fail({}))
+
+        catId = cat.data
+        updateData.catId = catId
+        updateData.status = 1
+    }
+
+    // 更新提交信息
+    collection = db.collection('posts')
+    await collection
+    .where({
+      _id: id
+    })
+    .update({
+      data: {
+        ...updateData
+      }
+    })
+
+    if (post.subscribe) {
+      // 推送订阅消息
+      await cloud.openapi.subscribeMessage.send({
+        touser: post.openId,
+        page: action === 'confirm' ? `/pages/detail/detail?id=${catId}&title=${post.name}` : `/pages/add-cat/add-cat?id=${catId}`,
+        lang: 'zh_CN',
+        data: {
+          thing3: {
+            value: '流浪猫信息审核'
+          },
+          phrase1: {
+            value: action === 'confirm' ? '通过' : '驳回'
+          },
+          thing5: {
+            value: post.name
+          },
+          date4: {
+            value: this.getDate('yyyy-MM-dd HH:mm:ss')
+          },
+          thing2: {
+            value: action === 'confirm' ? '感谢您提供的信息我们已经为您审核通过！' : '抱歉您提交的信息因包含敏感信息被驳回！'
+          }
+        },
+        templateId: 'rrPousHxOgv-Lf5vQMry8xa5CjspYVzfYCjXxFA-ZmI',
+        miniprogramState: 'formal'
+      })
+    }
+
+    return { data: this.success({ id }) }
+  }
+
+  /**
    * 保存图片
    * @param {*} url
    * @param {*} cloudPath

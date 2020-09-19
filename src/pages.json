@@ -37,6 +37,23 @@
         "backgroundColor": "#F7F2EE",
         "navigationBarBackgroundColor": "#F7F2EE"
       }
+    },
+    {
+      "path": "pages/cats-check/cats-check",
+      "style": {
+        "navigationBarTitleText": "猫咪审核",
+        "navigationStyle": "default",
+        "backgroundColor": "#F7F2EE",
+        "navigationBarBackgroundColor": "#F7F2EE"
+      }
+    },
+    {
+      "path": "pages/check-detail/check-detail",
+      "style": {
+        "navigationStyle": "default",
+        "backgroundColor": "#F7F2EE",
+        "navigationBarBackgroundColor": "#F7F2EE"
+      }
     }
   ],
   "globalStyle": {

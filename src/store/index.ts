@@ -15,6 +15,12 @@ export default new Vuex.Store({
     scienceTypes: [],
     tools: [
       {
+        icon: 'admin',
+        title: '猫咪审核',
+        levels: [3],
+        page: '/pages/cats-check/cats-check'
+      },
+      {
         icon: 'add-cat',
         title: '上报猫咪',
         levels: [0, 1, 2, 3],

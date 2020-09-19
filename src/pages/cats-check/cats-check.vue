@@ -1,34 +1,29 @@
 <template>
   <view class="container">
-    <view class="options">
-      <view class="add-button cu-btn round bg-orange" @click="addCat">上报猫咪</view>
-    </view>
-    <view class="context">
-      <page-main :status="status" :refresherTriggered="refresherTriggered"
-        @scrolltolower="onScrolltolower"
-        @refresherrefresh="onRefresherrefresh"
-        @refresherrestore="onRefresherrestore"
-        @refresherpulling="onRefresherpulling"
-        emtpyMessage="您还没有上报猫咪信息"
-      >
-        <view class="cat-content">
-          <post-item v-for="item in items" :key="item.post.id" :item="item"/>
-        </view>
-      </page-main>
-    </view>
+    <page-main :status="status" :refresherTriggered="refresherTriggered"
+      @scrolltolower="onScrolltolower"
+      @refresherrefresh="onRefresherrefresh"
+      @refresherrestore="onRefresherrestore"
+      @refresherpulling="onRefresherpulling"
+      emtpyMessage="暂无待审核猫咪信息"
+    >
+      <view class="cat-content">
+        <check-item v-for="item in items" :key="item.post.id" :item="item"/>
+      </view>
+    </page-main>
   </view>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Provide, Vue } from 'vue-property-decorator'
-import PostItem from '@/components/post-item/post-item.vue'
+import CheckItem from '@/components/check-item/check-item.vue'
 import { Posts } from '@/api'
 
 @Component({
-  name: 'CatsManage',
-  components: { PostItem }
+  name: 'CatsCheck',
+  components: { CheckItem }
 })
-export default class CatsManage extends Vue {
+export default class CatsCheck extends Vue {
   // 是否初始化
   @Prop({ type: Boolean, default: false })
   isInit!: boolean
@@ -76,7 +71,7 @@ export default class CatsManage extends Vue {
       return
     }
     this.isLoading = true
-    const items = await Posts.list({
+    const items = await Posts.checkList({
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
     })
@@ -129,36 +124,11 @@ export default class CatsManage extends Vue {
   onRefresherrestore () {
     this.refresherTriggered = false
   }
-
-  addCat () {
-    uni.navigateTo({
-      url: '/pages/add-cat/add-cat'
-    })
-  }
 }
 </script>
 
 <style lang="scss">
 .container {
   height: 100vh;
-
-  .options {
-    position: relative;
-    width: 100%;
-    height: 96rpx;
-
-    .add-button {
-      position: absolute;
-      right: 20rpx;
-      top: 16rpx;
-      width: 192rpx;
-      height: 64rpx;
-      border-radius: 32rpx;
-    }
-  }
-
-  .context {
-    height: calc(100% - 96rpx - env(safe-area-inset-bottom));
-  }
 }
 </style>
