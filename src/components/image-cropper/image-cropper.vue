@@ -293,7 +293,7 @@ export default class ImageCropper extends Vue {
   /**
    * 旋转图片
    */
-  rotateCropper () {
+  rotateImage () {
     if (this.rotate === 3) {
       this.rotate = 0
     } else {
@@ -488,7 +488,7 @@ export default class ImageCropper extends Vue {
   .cropper-setting-group {
     position: absolute;
     right: 60rpx;
-    bottom: calc(60rpx + env(safe-area-inset-bottom));
+    bottom: 60rpx;
     z-index: 9999;
 
     .cropper-setting-button {
