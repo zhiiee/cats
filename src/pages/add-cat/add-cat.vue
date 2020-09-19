@@ -2,14 +2,17 @@
   <view class="container">
     <view v-if="!isError">
       <scroll-view :scroll-y="true" style="height: calc(100vh - 140rpx - env(safe-area-inset-bottom));">
+        <!-- 头像 -->
         <view class="avatar">
           <img :src="avatar" mode="scaleToFill"/>
           <view class="avatar-edit iconfont icon-camera" @click="checkAvtater"/>
         </view>
+        <!-- 名字 -->
         <view class="cu-form-group margin-top">
           <view class="title">名字</view>
           <input placeholder="给猫咪起个名字" :value="name" @input="nameInput"/>
         </view>
+        <!-- 分类 -->
         <view class="cu-form-group">
           <view class="title">分类</view>
           <picker :value="typeIndex" :range="types" @change="typeChange">
@@ -18,12 +21,13 @@
             </view>
           </picker>
         </view>
+        <!-- 位置 -->
         <view class="cu-form-group">
           <view class="title">位置</view>
           <input class="location" placeholder="为了保护流浪猫 位置信息会隐藏显示" :disabled="true" :value="location" @click="changeLocation"/>
           <text class='cuIcon-locationfill text-orange' @click="changeLocation"/>
         </view>
-        <!-- 属性 -->
+        <!-- 描述 -->
         <view class="cu-form-group margin-top">
           <textarea placeholder="简单描述一下这只猫咪" :value="desc" @input="descInput"/>
         </view>
@@ -78,74 +82,18 @@
           </view>
         </view>
       </scroll-view>
+      <!-- 审核按钮 -->
       <view class="buttons padding">
         <button class="cu-btn block bg-orange lg" @click="saveCat">提交审核</button>
-      </view>
-      <!-- 添加属性模态框 -->
-      <view class="cu-modal" :class="addAttributeStatus ? 'show' : ''">
-        <view class="cu-dialog">
-          <view class="cu-bar bg-white justify-end">
-            <view class="content">添加属性</view>
-            <view class="action" @click="hideAddAttribute(false)">
-              <text class="cuIcon-close text-red"/>
-            </view>
-          </view>
-          <view class="padding-xl">
-            <view class="cu-form-group">
-              <input placeholder="属性名称" :value="attributeName" @input="attributeNameInput"/>
-            </view>
-            <view class="cu-form-group">
-              <input placeholder="属性描述" :value="attributeValue" @input="attributeValueInput"/>
-            </view>
-          </view>
-          <view class="cu-bar bg-white">
-            <view class="action margin-0 flex-sub text-green solid-left" @click="hideAddAttribute(false)">取消</view>
-            <view class="action margin-0 flex-sub  solid-left" @click="hideAddAttribute(true)">确定</view>
-          </view>
-        </view>
-      </view>
-      <!-- 选择关系模态框 -->
-      <view class="cu-modal bottom-modal" :class="selectRelationsStatus ? 'show' : ''">
-        <view class="cu-dialog">
-          <view class="cu-bar bg-white">
-            <view class="action text-blue" @click="hideSelectRelations">取消</view>
-            <view class="action text-green" @click="hideSelectRelations">确定</view>
-          </view>
-          <view class="select-relations">
-            <view class="cu-bar search bg-white">
-              <view class="search-form round">
-                <text class="cuIcon-search"/>
-                <input type="text" placeholder="根据名字搜索" confirm-type="search" :value="searchName" @input="searchNameInput" @blur="searchConfirm"/>
-              </view>
-            </view>
-            <scroll-view :scroll-y="true" style="height: 500rpx;"
-              :refresher-enabled="true"
-              :refresherTriggered="refresherTriggered"
-              @scrolltolower="onScrolltolower"
-              @refresherrefresh="onRefresherrefresh"
-              @refresherpulling="onRefresherpulling"
-              @refresherrestore="onRefresherrestore">
-              <view class="grid col-3 padding-sm">
-                <view v-for="(cat, index) in cats" class="padding-xs" :key="index">
-                  <button class="cu-btn orange lg block relation" :class="relations[cat.id] !== undefined ? 'bg-orange' : 'line-orange'"
-                    :data-index="index" @click="selectRelations">
-                    <view class="relation-avatar">
-                      <image :src="cat.avatar"/>
-                    </view>
-                    <view class="relation-name">{{ cat.name }}</view>
-                  </button>
-                </view>
-              </view>
-              <page-status v-if="status !== 2" :status="status"/>
-            </scroll-view>
-            <view style="width: 100%; height: env(safe-area-inset-bottom); padding-top: 40rpx;"></view>
-          </view>
-        </view>
       </view>
       <!-- 头像裁剪 -->
       <image-cropper :path="avtaterTempFilePath" cropperWidth="160" cropperHeight="160" @confirm="avtaterCropperConfirm"/>
       <!-- 封面裁剪 -->
       <image-cropper :path="coverTempFilePath" :cropperWidth="width" :cropperHeight="width * 0.8" @confirm="coverCropperConfirm"/>
+      <!-- 添加属性模态框 -->
+      <attribute-modal :show="addAttributeShow" @close="hideAddAttribute" @confirm="hideAddAttribute"/>
+      <!-- 选择关系模态框 -->
+      <relations-modal :show="selectRelationsShow" :value="relations" @cancel="hideSelectRelations" @confirm="hideSelectRelations"/>
     </view>
     <page-status v-if="isError" :status="1" message="喵星信号中断 请重试"/>
   </view>
@@ -155,103 +103,87 @@
 import { Component, Provide, Vue } from 'vue-property-decorator'
 import PageStatus from '@/components/page-status/page-status.vue'
 import ImageCropper from '@/components/image-cropper/image-cropper.vue'
-import { Categories, Cats } from '@/api'
+import AttributeModal from '@/components/attribute-modal/attribute-modal.vue'
+import RelationsModal from '@/components/relations-modal/relations-modal.vue'
+import { Categories } from '@/api'
 
 @Component({
   name: 'AddCat',
-  components: { PageStatus, ImageCropper }
+  components: { PageStatus, ImageCropper, AttributeModal, RelationsModal }
 })
 export default class AddCat extends Vue {
   @Provide()
   isError = false
 
+  // 表单数据
   @Provide()
   form = {}
 
+  // 头像
   @Provide()
   avatar = ''
 
+  // 头像文件地址
   @Provide()
   avtaterTempFilePath = ''
 
+  // 名字
   @Provide()
   name = ''
 
+  // 分类下标
   @Provide()
   typeIndex = -1
 
+  // 分类名称
   @Provide()
   type = ''
 
+  // 位置
   @Provide()
   location = ''
 
+  // 纬度
   @Provide()
   latitude!: number
 
+  // 经度
   @Provide()
   longitude!: number
 
+  // 描述
   @Provide()
   desc = ''
 
+  // 封面
   @Provide()
   cover = ''
 
+  // 封面文件地址
   @Provide()
   coverTempFilePath = ''
 
+  // 属性项列表(数据库存的值)
   @Provide()
   items: Array<any> = []
 
+  // 属性列表(用于渲染列表)
   @Provide()
   attributes: Array<any> = []
 
+  // 是否显示添加属性
   @Provide()
-  addAttributeStatus = false
+  addAttributeShow = false
 
+  // 关系列表
   @Provide()
-  attributeName = ''
+  relations: Array<any> = []
 
+  // 是否显示关系选择
   @Provide()
-  attributeValue = ''
+  selectRelationsShow = false
 
-  @Provide()
-  relations: any = {}
-
-  @Provide()
-  searchName = ''
-
-  @Provide()
-  selectRelationsStatus = false
-
-  // 下拉刷新状态
-  @Provide()
-  refresherTriggered = false
-
-  // 页码
-  @Provide()
-  pageIndex = 1
-
-  // 页大小
-  @Provide()
-  pageSize = 15
-
-  // 是否加载更多
-  @Provide()
-  isLoadMore = true
-
-  // 是否在加载中
-  @Provide()
-  isLoading = false
-
-  // 状态 0: 加载中 1: 加载失败 2: 加载成功 3: 没数据
-  @Provide()
-  status = 0
-
-  @Provide()
-  cats: Array<any> = []
-
+  // 照片列表
   @Provide()
   photos: Array<any> = []
 
@@ -387,39 +319,23 @@ export default class AddCat extends Vue {
    * 显示添加属性
    */
   showAddAttribute () {
-    this.addAttributeStatus = true
-  }
-
-  /**
-   * 输入属性名
-   */
-  attributeNameInput (event: any) {
-    this.attributeName = event.detail.value
-  }
-
-  /**
-   * 输入属性值
-   */
-  attributeValueInput (event: any) {
-    this.attributeValue = event.detail.value
+    this.addAttributeShow = true
   }
 
   /**
    * 隐藏添加属性
    */
-  hideAddAttribute (status: boolean) {
-    if (status) {
+  hideAddAttribute (attribute: any) {
+    if (attribute && attribute.name) {
       this.attributes.push({
-        name: this.attributeName
+        name: attribute.name
       })
       this.items[this.attributes.length - 1] = {
-        category: this.attributeName,
-        content: this.attributeValue
+        category: attribute.name,
+        content: attribute.value
       }
     }
-    this.attributeName = ''
-    this.attributeValue = ''
-    this.addAttributeStatus = false
+    this.addAttributeShow = false
   }
 
   /**
@@ -443,116 +359,15 @@ export default class AddCat extends Vue {
    * 显示关系选择
    */
   showSelectRelations () {
-    this.selectRelationsStatus = true
-    if (this.cats.length === 0) {
-      this.isLoadMore = true
-      this.loadRelations()
-    }
-  }
-
-  /**
-   * 关系搜索输入
-   */
-  searchNameInput (event: any) {
-    this.searchName = event.detail.value
-  }
-
-  /**
-   * 搜索事件
-   */
-  searchConfirm () {
-    this.cats = []
-    this.onRefresherrefresh()
-  }
-
-  /**
-   * 加载关系列表
-   */
-  async loadRelations (isRefresh?: boolean) {
-    if ((!this.isLoadMore && !isRefresh) || this.isLoading) {
-      return
-    }
-    this.isLoading = true
-    const cats = await Cats.list({
-      type: this.type,
-      name: this.searchName,
-      pageIndex: this.pageIndex,
-      pageSize: this.pageSize
-    })
-    this.isLoading = false
-    if (cats !== -1) {
-      if (cats.length) {
-        this.pageIndex++
-        if (isRefresh) {
-          this.cats = []
-        }
-        for (const cat of cats) {
-          this.cats.push(cat)
-        }
-        this.isLoadMore = cats.length === this.pageSize
-        this.status = 2
-      } else {
-        this.status = 3
-      }
-    } else {
-      this.status = 1
-    }
-  }
-
-  /**
-   * 选择关系
-   */
-  selectRelations (event: any) {
-    const { index } = event.currentTarget.dataset
-    // 此处未触发视图更新 临时解决办法 有空再研究下为什么 可能是深拷贝的问题
-    const temp = this.cats
-    this.cats = []
-    this.cats = temp
-    // 根据当前点击的下标获取当前点击的猫咪
-    const cat = this.cats[index]
-    // 需要判断是选择还是取消
-    if (this.relations[cat.id] === undefined) {
-      this.relations[cat.id] = cat
-    } else {
-      delete this.relations[cat.id]
-    }
-  }
-
-  /**
-   * 触底加载
-   */
-  async onScrolltolower () {
-    await this.loadRelations()
-  }
-
-  /**
-   * 下拉事件开始
-   */
-  onRefresherpulling () {
-    this.refresherTriggered = true
-  }
-
-  /**
-   * 触发下拉事件
-   */
-  async onRefresherrefresh () {
-    this.pageIndex = 1
-    await this.loadRelations(true)
-    this.refresherTriggered = false
-  }
-
-  /**
-   * 下拉事件结束
-   */
-  onRefresherrestore () {
-    this.refresherTriggered = false
+    this.selectRelationsShow = true
   }
 
   /**
    * 隐藏关系选择
    */
-  hideSelectRelations () {
-    this.selectRelationsStatus = false
+  hideSelectRelations (relations: any) {
+    this.selectRelationsShow = false
+    this.relations = relations
   }
 
   /**
@@ -714,46 +529,6 @@ export default class AddCat extends Vue {
 
   .bar-border {
     border-bottom: 1rpx solid #EEEEEE;
-  }
-
-  .select-relations {
-    padding: 0rpx;
-
-    .search {
-      width: 100%;
-    }
-
-    .relation {
-      padding: 0 20rpx;
-      display: block;
-
-      .relation-avatar {
-        position: absolute;
-        left: 20rpx;
-        top: 50%;
-        width: 40rpx;
-        height: 40rpx;
-        transform: translateY(-50%);
-
-        image {
-          width: 100%;
-          height: 100%;
-          border-radius: 50%;
-        }
-      }
-
-      .relation-name {
-        position: absolute;
-        left: 70rpx;
-        top: 50%;
-        width: calc(100% - 90rpx);
-        text-align: left;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        transform: translateY(-50%);
-      }
-    }
   }
 
   .buttons {
