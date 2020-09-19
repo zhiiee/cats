@@ -12,6 +12,7 @@
         emtpyMessage="您还没有上报猫咪信息"
       >
         <view class="cat-content">
+          <post-item v-for="item in items" :key="item.post.id" :item="item"/>
         </view>
       </page-main>
     </view>
@@ -20,10 +21,12 @@
 
 <script lang="ts">
 import { Component, Prop, Provide, Vue } from 'vue-property-decorator'
+import PostItem from '@/components/post-item/post-item.vue'
 import { Posts } from '@/api'
 
 @Component({
-  name: 'CatsManage'
+  name: 'CatsManage',
+  components: { PostItem }
 })
 export default class CatsManage extends Vue {
   // 是否初始化

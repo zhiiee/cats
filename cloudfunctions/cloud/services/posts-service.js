@@ -31,7 +31,9 @@ class PostsService extends BaseService {
         _id: true,
         name: true,
         desc: true,
-        avatar: true
+        avatar: true,
+        status: true,
+        catId: true
       })
       .orderBy('updateTime', 'desc')
       .get()
@@ -47,6 +49,23 @@ class PostsService extends BaseService {
 
       result.total = total
     }
+
+    return { data: result }
+  }
+
+  /**
+   * 查询上报详细
+   * @param {*} data
+   * @param {*} context
+   */
+  async detail (data, context) {
+    const { id } = data
+    let collection = db.collection('posts')
+    let result = await collection
+      .doc(id)
+      .get()
+      .then(result => this.success(result.data))
+      .catch(() => this.fail({}))
 
     return { data: result }
   }
@@ -73,7 +92,7 @@ class PostsService extends BaseService {
       .add({
         data: {
           ...data,
-          status: false,
+          status: 0,
           openId: context.OPENID,
           ...this.defaultValue()
         }
@@ -85,11 +104,53 @@ class PostsService extends BaseService {
   }
 
   /**
+   * 更新猫咪
+   * @param {*} data
+   * @param {*} context
+   */
+  async update (data, context) {
+    const { id } = data
+    delete data.id
+    let collection = db.collection('posts')
+    let result = await collection
+      .where({
+        _id: id
+      })
+      .update({
+        data: {
+          ...data,
+          status: 0,
+          updateTime: new Date().getTime()
+        }
+      })
+      .then(result => this.success(result.data))
+      .catch(() => this.fail({}))
+
+    return { data: result }
+  }
+
+  /**
+   * 删除文件
+   * @param {*} data
+   * @param {*} context
+   */
+  async deleteFile (data, context) {
+    const { fileId } = data
+    const result = await cloud.deleteFile({
+      fileList: [fileId],
+    })
+    return this.success({ result })
+  }
+
+  /**
    * 保存图片
    * @param {*} url
    * @param {*} cloudPath
    */
   async saveFile (url, cloudPath) {
+    if (url.indexOf('cloud://') !== -1) {
+      return url
+    }
     // 下载文件
     const buffer = await this.downloadFile(url)
     return (await cloud.uploadFile({

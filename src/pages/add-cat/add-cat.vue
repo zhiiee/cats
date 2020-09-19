@@ -118,6 +118,9 @@ export default class AddCat extends Vue {
   @Provide()
   isError = false
 
+  @Provide()
+  id?: string
+
   // 头像
   @Provide()
   avatar = ''
@@ -207,7 +210,9 @@ export default class AddCat extends Vue {
     return uni.getSystemInfoSync().windowWidth * 0.8
   }
 
-  async onLoad () {
+  async onLoad (options: any) {
+    const { id } = options
+
     // 获取猫咪属性列表
     this.attributes = []
     const attributes = await Categories.list({ type: 2 })
@@ -221,6 +226,22 @@ export default class AddCat extends Vue {
         name: attribute.name
       }
     })
+
+    if (id) {
+      this.id = id
+      uni.showLoading({
+        mask: true,
+        title: '加载中...'
+      })
+      const data = await Posts.detail(id)
+      if (data === -1) {
+        this.isError = true
+        return
+      }
+      this.initData(data)
+      uni.hideLoading()
+    }
+
     uni.getLocation({
       type: 'gcj02',
       altitude: true,
@@ -231,6 +252,40 @@ export default class AddCat extends Vue {
         this.longitude = result.longitude
       }
     })
+  }
+
+  /**
+   * 初始化数据
+   */
+  initData (data: any) {
+    this.avatar = data.avatar
+    this.name = data.name
+    this.type = data.type
+    this.$store.state.catTypes.map((type: any, index: number) => {
+      if (type.code === this.type) {
+        this.typeIndex = index
+      }
+    })
+    this.location = data.location
+    this.desc = data.desc
+    this.cover = data.cover
+    this.items = data.items
+    const tempAttributes = this.attributes
+    this.items.map(item => {
+      let flag = false
+      tempAttributes.map(attributes => {
+        if (item.category === attributes.name) {
+          flag = true
+        }
+      })
+      if (!flag) {
+        this.attributes.push({
+          name: item.category
+        })
+      }
+    })
+    this.relations = data.relations
+    this.photos = data.photos
   }
 
   /**
@@ -412,7 +467,11 @@ export default class AddCat extends Vue {
       content: '确定要删除这张照片吗？',
       success: result => {
         if (result.confirm) {
-          this.photos.splice(index, 1)
+          const photos = this.photos.splice(index, 1)
+          console.log(photos)
+          // if (photos[0].indexOf('cloud://') !== -1) {
+          //   this.deleteFile(photos[0])
+          // }
         }
       }
     })
@@ -432,7 +491,6 @@ export default class AddCat extends Vue {
       if (await this.securityCheck()) {
         this.submitStatus = true
         uni.showToast({
-          mask: true,
           icon: 'success',
           title: '初审通过',
           duration: 3000
@@ -648,17 +706,19 @@ export default class AddCat extends Vue {
         if (result['rrPousHxOgv-Lf5vQMry8xa5CjspYVzfYCjXxFA-ZmI'] === 'accept') {
           subscribe = true
         }
-        const respone = await Posts.create({
+        const data = {
           avatar: this.avatar,
           name: this.name,
           type: this.type,
+          location: this.location,
           desc: this.desc,
           cover: this.cover,
           items: this.items,
           relations: this.relations,
           photos: this.photos,
           subscribe: subscribe
-        })
+        }
+        const respone = this.id ? await Posts.update({ id: this.id, ...data }) : await Posts.create(data)
         if (respone !== -1) {
           uni.navigateBack({
             delta: 1
@@ -668,6 +728,13 @@ export default class AddCat extends Vue {
         }
       }
     })
+  }
+
+  /**
+   * 删除文件
+   */
+  async deleteFile (fileId: string) {
+    await Posts.deleteFile(fileId)
   }
 }
 </script>
