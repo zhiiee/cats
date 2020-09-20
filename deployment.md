@@ -1,6 +1,6 @@
 # 部署说明
 
-本项目前端使用 `uni-app` 开发， 后端完全采用 `微信小程序云开发` 实现，需先开通微信小程序云开发后才可以使用，小程序云开发的介绍以及开通请参考[官方文档](https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html)
+本项目前端采用 [uni-app](https://uniapp.dcloud.io) 框架开发，后端完全采用 [微信小程序云开发](https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html) 实现，需先开通微信小程序云开发后才可以使用，小程序云开发的介绍以及开通请参考[官方文档](https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html)
 
 ## 下载代码
 
