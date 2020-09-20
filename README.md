@@ -30,7 +30,9 @@
 
 ![](./doc/images/8.png)
 
-![](./doc/images/9.png) -->
+![](./doc/images/9.png)
+
+![](./doc/images/10.png) -->
 
 <img src="./doc/images/1.png" width="400px"/>
 
@@ -49,6 +51,8 @@
 <img src="./doc/images/8.png" width="400px"/>
 
 <img src="./doc/images/9.png" width="400px"/>
+
+<img src="./doc/images/10.png" width="400px"/>
 
 ## 线上版本
 
