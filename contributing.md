@@ -4,7 +4,7 @@
 
 ## 目录规范
 
-源码的目录规范请参考 [源码目录介绍](https://github.com/zhiiee/cats/blob/master/code-of-conduct.md)
+源码的目录规范请参考 [源码目录介绍](./code-of-conduct.md)
 
 ## 代码检查
 

@@ -15,6 +15,10 @@ cloudfunctions                             // 云开发目录
     │   │
     │   ├── cats-service.js                // 猫咪相关接口
     │   │
+    │   ├── posts-service.js               // 上报相关接口
+    │   │
+    │   ├── security-service.js            // 内容安全相关接口
+    │   │
     │   └── users-service.js               // 用户相关接口
     │
     ├── config.json                        // 云函数配置
@@ -53,6 +57,14 @@ src
 │   │  │
 │   │  └── index.ts
 │   │
+│   ├── posts                              // 上报相关接口
+│   │  │
+│   │  └── index.ts
+│   │
+│   ├── security                           // 内容安全相关接口
+│   │  │
+│   │  └── index.ts
+│   │
 │   ├── users                              // 用户相关接口
 │   │  │
 │   │  └── index.ts
@@ -71,6 +83,10 @@ src
 │   │  │
 │   │  └── article-view.vue                // 文章组件
 │   │
+│   ├── attribute-modal
+│   │  │
+│   │  └── attribute-modal.vue             // 添加属性组件
+│   │
 │   ├── cat-item
 │   │  │
 │   │  └── cat-item.vue                    // 猫咪卡片组件
@@ -78,6 +94,14 @@ src
 │   ├── cat-list
 │   │  │
 │   │  └── cat-list.vue                    // 猫咪列表组件
+│   │
+│   ├── check-item
+│   │  │
+│   │  └── check-item.vue                  // 审核列表项组件
+│   │
+│   ├── image-cropper
+│   │  │
+│   │  └── image-cropper.vue               // 图片裁剪组件
 │   │
 │   ├── loading
 │   │  │
@@ -95,6 +119,14 @@ src
 │   │  │
 │   │  └── page-status.vue                 // 页面状态组件
 │   │
+│   ├── post-item
+│   │  │
+│   │  └── post-item.vue                   // 上报列表项组件
+│   │
+│   ├── relations-modal
+│   │  │
+│   │  └── relations-modal.vue             // 关系选择模态框组件
+│   │
 │   └── tab-bar
 │      │
 │      └── tab-bar.vue                     // 头部tab-bar组件
@@ -109,13 +141,25 @@ src
 │   │  │
 │   │  └── about.vue                       // 关于页面
 │   │
-│   ├── detail
+│   ├── add-cat
 │   │  │
-│   │  └── detail.vue                      // 猫咪详情
+│   │  └── add-cat.vue                     // 上报猫咪页面
+│   │
+│   ├── cats-check
+│   │  │
+│   │  └── cats-check.vue                  // 猫咪审核列表页面
 │   │
 │   ├── cats-manage
 │   │  │
-│   │  └── cats-manage.vue                 // 我的上报管理页面（猫咪管理）
+│   │  └── cats-manage.vue                 // 我的上报页面
+│   │
+│   ├── check-detail
+│   │  │
+│   │  └── check-detail.vue                // 审核详细页面
+│   │
+│   ├── detail
+│   │  │
+│   │  └── detail.vue                      // 猫咪详情
 │   │
 │   ├── home
 │   │  │
@@ -130,6 +174,8 @@ src
 │      └── science.vue                     // 科普页面
 │
 ├── plugins                                // 第三方库都放到这里(按名称区分)
+│   │
+│   ├── colorui                            // ColorUI 组件库
 │   │
 │   ├── iconfont                           // 阿里巴巴矢量图标
 │   │
