@@ -158,6 +158,7 @@ export default class CatsManage extends Vue {
   }
 
   .context {
+    padding: 0rpx 20rpx;
     height: calc(100% - 96rpx - env(safe-area-inset-bottom));
   }
 }

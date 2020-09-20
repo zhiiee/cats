@@ -43,7 +43,7 @@ export default class PostItem extends Vue {
   }
 
   goCatDetail () {
-    if (this.item.catId) {
+    if (this.item.catId && this.item.status === 1) {
       uni.navigateTo({
         url: `/pages/detail/detail?id=${this.item.catId}&title=${this.item.name}`
       })

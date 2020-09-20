@@ -130,5 +130,9 @@ export default class CatsCheck extends Vue {
 <style lang="scss">
 .container {
   height: 100vh;
+
+  .cat-content {
+    padding: 20rpx;
+  }
 }
 </style>

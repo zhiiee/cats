@@ -1,5 +1,6 @@
 const BaseService = require('./base-service.js')
 const { v4: uuidv4 } = require('uuid')
+const moment = require('moment')
 
 /**
  * 提交相关接口
@@ -204,81 +205,30 @@ class PostsService extends BaseService {
       .then(result => result.data)
       .catch(() => {})
 
-    let updateData = {
-      status: -1,
-      updateTime: new Date().getTime()
-    }
+    let catId = post.catId
 
-    let catId = post._id
-
+    // 处理猫咪信息
     if (action === 'confirm') {
-      // 复制到cats表
-      collection = db.collection('cats')
-      let cat = await collection
-        .add({
-          data: {
-            openId: post.openId,
-            avatar: post.avatar,
-            name: post.name,
-            type: post.type,
-            location: post.location,
-            desc: post.desc,
-            cover: post.cover,
-            items: post.items,
-            relations: post.relations,
-            photos: post.photos,
-            isHide: post.isHide,
-            isDelete: post.isDelete,
-            createTime: post.createTime,
-            updateTime: post.updateTime
-          }
-        })
-        .then(result => this.success(result._id))
-        .catch(() => this.fail({}))
-
-        catId = cat.data
-        updateData.catId = catId
-        updateData.status = 1
+      catId = await this.handleCat(post)
     }
 
     // 更新提交信息
-    collection = db.collection('posts')
     await collection
-    .where({
-      _id: id
-    })
-    .update({
-      data: {
-        ...updateData
-      }
-    })
-
-    if (post.subscribe) {
-      // 推送订阅消息
-      await cloud.openapi.subscribeMessage.send({
-        touser: post.openId,
-        page: action === 'confirm' ? `/pages/detail/detail?id=${catId}&title=${post.name}` : `/pages/add-cat/add-cat?id=${catId}`,
-        lang: 'zh_CN',
-        data: {
-          thing3: {
-            value: '流浪猫信息审核'
-          },
-          phrase1: {
-            value: action === 'confirm' ? '通过' : '驳回'
-          },
-          thing5: {
-            value: post.name
-          },
-          date4: {
-            value: this.getDate('yyyy-MM-dd HH:mm:ss')
-          },
-          thing2: {
-            value: action === 'confirm' ? '感谢您提供的信息我们已经为您审核通过！' : '抱歉您提交的信息因包含敏感信息被驳回！'
-          }
-        },
-        templateId: 'rrPousHxOgv-Lf5vQMry8xa5CjspYVzfYCjXxFA-ZmI',
-        miniprogramState: 'formal'
+      .where({
+        _id: id
       })
+      .update({
+        data: {
+          catId: catId,
+          status: action === 'confirm' ? 1 : -1,
+          updateTime: new Date().getTime()
+        }
+      })
+
+    // 推送订阅消息
+    if (post.subscribe) {
+      console.log('订阅消息')
+      this.sendSubscribeMessage(action === 'confirm', post.openId, catId, post.name)
     }
 
     return { data: this.success({ id }) }
@@ -324,6 +274,87 @@ class PostsService extends BaseService {
     if (photos.length > index + 1) {
       await this.savaPhoto(photos, index + 1, cloudPhotos)
     }
+  }
+
+  /**
+   * 处理猫咪信息
+   * @param {*} post
+   */
+  async handleCat (post) {
+    let collection = db.collection('cats')
+
+    // 猫咪信息
+    const data = {
+      openId: post.openId,
+      avatar: post.avatar,
+      name: post.name,
+      type: post.type,
+      location: post.location,
+      desc: post.desc,
+      cover: post.cover,
+      items: post.items,
+      relations: post.relations,
+      photos: post.photos,
+      isHide: post.isHide,
+      isDelete: post.isDelete,
+      createTime: post.createTime,
+      updateTime: post.updateTime
+    }
+
+    // 判断是否关联catId 如果有就是更新 如果没有就是新增
+    if (post.catId) {
+      await collection
+        .where({
+          _id: post.catId
+        })
+        .update({ data: data })
+        .then(result => this.success(result.data))
+        .catch(() => this.fail({}))
+      
+        return post.catId
+    } else {
+      let result = await collection
+        .add({ data: data })
+        .then(result => this.success(result._id))
+        .catch(() => this.fail({}))
+
+      return result.data
+    }
+  }
+
+  /**
+   * 发送订阅消息
+   * @param {*} status
+   * @param {*} openId
+   * @param {*} id
+   * @param {*} name
+   */
+  async sendSubscribeMessage (status, openId, id, name) {
+    // 推送订阅消息
+    await cloud.openapi.subscribeMessage.send({
+      touser: openId,
+      templateId: 'rrPousHxOgv-Lf5vQMry8xa5CjspYVzfYCjXxFA-ZmI',
+      page: status ? `/pages/detail/detail?id=${id}&title=${name}` : '/pages/index/index',
+      data: {
+        thing3: {
+          value: '流浪猫信息审核'
+        },
+        phrase1: {
+          value: status ? '通过' : '驳回'
+        },
+        thing5: {
+          value: name
+        },
+        date4: {
+          value: moment(new Date()).utcOffset(480).format('YYYY-MM-DD HH:mm:ss')
+        },
+        thing2: {
+          value: status ? '感谢您提供的信息我们已经为您审核通过！' : '抱歉您提交的信息因包含敏感信息被驳回！'
+        }
+      },
+      miniprogramState: 'trial',
+      lang: 'zh_CN'
+    })
   }
 }
 
