@@ -1,4 +1,5 @@
-const BaseService = require('./base-service.js')
+/* eslint-disable @typescript-eslint/no-var-requires */
+const BaseService = require('./base-service')
 const { v4: uuidv4 } = require('uuid')
 const moment = require('moment')
 
@@ -13,11 +14,12 @@ class PostsService extends BaseService {
    */
   async list (data, context) {
     const { pageIndex, pageSize } = data
-    let collection = db.collection('posts')
-    let where = {
+    let collection = global.db.collection('posts')
+
+    const where = {
       openId: context.OPENID,
-      isHide: _.neq(true),
-      isDelete: _.neq(true)
+      isHide: global._.neq(true),
+      isDelete: global._.neq(true)
     }
 
     if (pageSize && pageSize !== -1) {
@@ -26,7 +28,7 @@ class PostsService extends BaseService {
         .limit(pageSize)
     }
 
-    let result = await collection
+    const result = await collection
       .where(where)
       .field({
         _id: true,
@@ -42,7 +44,7 @@ class PostsService extends BaseService {
       .catch(() => this.fail([]))
 
     if (pageSize && pageSize !== -1) {
-      let total = await collection
+      const total = await collection
         .where(where)
         .count()
         .then(result => { return result.total })
@@ -57,12 +59,11 @@ class PostsService extends BaseService {
   /**
    * 查询上报详细
    * @param {*} data
-   * @param {*} context
    */
-  async detail (data, context) {
+  async detail (data) {
     const { id } = data
-    let collection = db.collection('posts')
-    let result = await collection
+    const collection = global.db.collection('posts')
+    const result = await collection
       .doc(id)
       .get()
       .then(result => this.success(result.data))
@@ -88,8 +89,8 @@ class PostsService extends BaseService {
     // 保存照片
     data.photos = await this.savaPhotos(photos)
 
-    let collection = db.collection('posts')
-    let result = await collection
+    const collection = global.db.collection('posts')
+    const result = await collection
       .add({
         data: {
           ...data,
@@ -107,9 +108,8 @@ class PostsService extends BaseService {
   /**
    * 更新猫咪
    * @param {*} data
-   * @param {*} context
    */
-  async update (data, context) {
+  async update (data) {
     const { id, avatar, cover, photos } = data
     delete data.id
 
@@ -122,8 +122,8 @@ class PostsService extends BaseService {
     // 保存照片
     data.photos = await this.savaPhotos(photos)
 
-    let collection = db.collection('posts')
-    let result = await collection
+    const collection = global.db.collection('posts')
+    const result = await collection
       .where({
         _id: id
       })
@@ -143,12 +143,11 @@ class PostsService extends BaseService {
   /**
    * 删除文件
    * @param {*} data
-   * @param {*} context
    */
-  async deleteFile (data, context) {
+  async deleteFile (data) {
     const { fileId } = data
-    const result = await cloud.deleteFile({
-      fileList: [fileId],
+    const result = await global.cloud.deleteFile({
+      fileList: [fileId]
     })
     return this.success({ result })
   }
@@ -156,15 +155,14 @@ class PostsService extends BaseService {
   /**
    * 获取待审核列表
    * @param {*} data
-   * @param {*} context
    */
-  async checkList (data, context) {
+  async checkList (data) {
     const { pageIndex, pageSize } = data
-    let collection = db.collection('posts')
-    let where = {
+    let collection = global.db.collection('posts')
+    const where = {
       status: 0,
-      isHide: _.neq(true),
-      isDelete: _.neq(true)
+      isHide: global._.neq(true),
+      isDelete: global._.neq(true)
     }
 
     if (pageSize && pageSize !== -1) {
@@ -173,7 +171,7 @@ class PostsService extends BaseService {
         .limit(pageSize)
     }
 
-    let result = await collection
+    const result = await collection
       .where(where)
       .field({
         _id: true,
@@ -187,7 +185,7 @@ class PostsService extends BaseService {
       .catch(() => this.fail([]))
 
     if (pageSize && pageSize !== -1) {
-      let total = await collection
+      const total = await collection
         .where(where)
         .count()
         .then(result => { return result.total })
@@ -202,18 +200,17 @@ class PostsService extends BaseService {
   /**
    * 审核上报的信息
    * @param {*} data
-   * @param {*} context
    */
-  async check (data, context) {
+  async check (data) {
     const { id, action } = data
-    let collection = db.collection('posts')
+    const collection = global.db.collection('posts')
 
     // 查询上报的信息
-    let post = await collection
+    const post = await collection
       .doc(id)
       .get()
       .then(result => result.data)
-      .catch(() => {})
+      .catch(() => { return {} })
 
     let catId = post.catId
 
@@ -255,7 +252,7 @@ class PostsService extends BaseService {
     }
     // 下载文件
     const buffer = await this.downloadFile(url)
-    return (await cloud.uploadFile({
+    return (await global.cloud.uploadFile({
       cloudPath: cloudPath,
       fileContent: buffer
     })).fileID
@@ -291,7 +288,7 @@ class PostsService extends BaseService {
    * @param {*} post
    */
   async handleCat (post) {
-    let collection = db.collection('cats')
+    const collection = global.db.collection('cats')
 
     // 猫咪信息
     const data = {
@@ -320,10 +317,10 @@ class PostsService extends BaseService {
         .update({ data: data })
         .then(result => this.success(result.data))
         .catch(() => this.fail({}))
-      
-        return post.catId
+
+      return post.catId
     } else {
-      let result = await collection
+      const result = await collection
         .add({ data: data })
         .then(result => this.success(result._id))
         .catch(() => this.fail({}))
@@ -341,7 +338,7 @@ class PostsService extends BaseService {
    */
   async sendSubscribeMessage (status, openId, id, name) {
     // 推送订阅消息
-    await cloud.openapi.subscribeMessage.send({
+    await global.cloud.openapi.subscribeMessage.send({
       touser: openId,
       templateId: 'rrPousHxOgv-Lf5vQMry8xa5CjspYVzfYCjXxFA-ZmI',
       page: status ? `/pages/detail/detail?id=${id}&title=${name}` : '/pages/index/index',

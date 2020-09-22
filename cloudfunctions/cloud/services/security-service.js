@@ -1,4 +1,5 @@
-const BaseService = require('./base-service.js')
+/* eslint-disable @typescript-eslint/no-var-requires */
+const BaseService = require('./base-service')
 const images = require('images')
 
 /**
@@ -8,35 +9,33 @@ class SecurityService extends BaseService {
   /**
    * 图片安全检查
    * @param {*} data
-   * @param {*} context
    */
-  async imgSecCheck (data, context) {
+  async imgSecCheck (data) {
     const { url } = data
     // 下载文件
     const buffer = await this.downloadFile(url)
     // 检查文件
-    const result = await cloud.openapi.security.imgSecCheck({
+    const result = await global.cloud.openapi.security.imgSecCheck({
       media: {
         contentType: 'image/jpg',
         value: this.compressSize(this.changeSize(buffer))
       }
     })
-    
+
     return this.success({ url, status: result.errCode })
   }
 
   /**
    * 文本安全检查
    * @param {*} data
-   * @param {*} context
    */
-  async msgSecCheck (data, context) {
+  async msgSecCheck (data) {
     const { content } = data
     // 检查文件
-    const result = await cloud.openapi.security.msgSecCheck({
+    const result = await global.cloud.openapi.security.msgSecCheck({
       content: content
     })
-    
+
     return this.success({ status: result.errCode })
   }
 

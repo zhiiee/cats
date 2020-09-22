@@ -1,4 +1,5 @@
-const BaseService = require('./base-service.js')
+/* eslint-disable @typescript-eslint/no-var-requires */
+const BaseService = require('./base-service')
 
 /**
  * 猫咪相关接口
@@ -7,24 +8,26 @@ class CatsService extends BaseService {
   /**
    * 查询猫咪列表
    * @param {*} data
-   * @param {*} context
    */
-  async list (data, context) {
+  async list (data) {
     const { type, name, pageIndex, pageSize } = data
-    let collection = db.collection('cats')
-    let where = {
-      isHide: _.neq(true),
-      isDelete: _.neq(true)
+    let collection = global.db.collection('cats')
+
+    const where = {
+      isHide: global._.neq(true),
+      isDelete: global._.neq(true)
     }
-    let isType = type !== null && type !== undefined && type.length > 0
+
+    const isType = type !== null && type !== undefined && type.length > 0
     if (isType) {
       where.type = type
     }
-    let isName = name !== null && name !== undefined && name.length > 0
+
+    const isName = name !== null && name !== undefined && name.length > 0
     if (isName) {
-      where.name = new db.RegExp({
+      where.name = new global.db.RegExp({
         regexp: name,
-        options: 'i',
+        options: 'i'
       })
     }
 
@@ -34,7 +37,7 @@ class CatsService extends BaseService {
         .limit(pageSize)
     }
 
-    let result = await collection
+    const result = await collection
       .where(where)
       .field({
         _id: true,
@@ -49,7 +52,7 @@ class CatsService extends BaseService {
       .catch(() => this.fail([]))
 
     if (pageSize && pageSize !== -1) {
-      let total = await collection
+      const total = await collection
         .where(where)
         .count()
         .then(result => { return result.total })
@@ -64,12 +67,11 @@ class CatsService extends BaseService {
   /**
    * 查询猫咪详细
    * @param {*} data
-   * @param {*} context
    */
-  async detail (data, context) {
+  async detail (data) {
     const { id } = data
-    let collection = db.collection('cats')
-    let result = await collection
+    const collection = global.db.collection('cats')
+    const result = await collection
       .doc(id)
       .get()
       .then(result => this.success(result.data))

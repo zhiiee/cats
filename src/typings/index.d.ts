@@ -19,13 +19,13 @@ declare namespace UniApp {
     // 开启高精度定位
     isHighAccuracy?: boolean;
     // 高精度定位超时时间(ms)，指定时间内返回最高精度，该值3000ms以上高精度定位才有效果
-    highAccuracyExpireTime?: number
+    highAccuracyExpireTime?: number;
   }
 
   interface ChooseLocationOptionsExpand extends UniApp.ChooseLocationOptions {
     // 目标地纬度
     latitude?: number;
-    // 目标地经度	
+    // 目标地经度
     longitude?: number;
   }
 }

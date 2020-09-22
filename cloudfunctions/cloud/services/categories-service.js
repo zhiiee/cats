@@ -1,4 +1,5 @@
-const BaseService = require('./base-service.js')
+/* eslint-disable @typescript-eslint/no-var-requires */
+const BaseService = require('./base-service')
 
 /**
  * 分类相关接口
@@ -7,18 +8,17 @@ class CategoriesService extends BaseService {
   /**
    * 查询分类列表
    * @param {*} data
-   * @param {*} context
    */
-  async list (data, context) {
+  async list (data) {
     // type 1：品种、2：属性、3：科普
     const { type, pageIndex, pageSize } = data
-    let collection = db.collection('categories')
-    let where = {
-      isHide: _.neq(true),
-      isDelete: _.neq(true)
+    let collection = global.db.collection('categories')
+    const where = {
+      isHide: global._.neq(true),
+      isDelete: global._.neq(true)
     }
 
-    let isWhere = type !== null && type !== undefined && type !== 0
+    const isWhere = type !== null && type !== undefined && type !== 0
     if (isWhere) {
       where.type = type
     }
@@ -29,7 +29,7 @@ class CategoriesService extends BaseService {
         .limit(pageSize)
     }
 
-    let result = await collection
+    const result = await collection
       .where(where)
       .field({
         code: true,
@@ -41,7 +41,7 @@ class CategoriesService extends BaseService {
       .catch(() => this.fail([]))
 
     if (pageSize && pageSize !== -1) {
-      let total = await collection
+      const total = await collection
         .where(where)
         .count()
         .then(result => { return result.total })

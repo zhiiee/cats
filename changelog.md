@@ -31,3 +31,9 @@
 版本号：[2.0.2](https://github.com/zhiiee/cats/tree/hotfix/2.0.2)
 
 > 修复更新上报信息后重新上传照片没有下载图片并导致珊瑚检测失败的bug
+
+## 2020年09月22日
+
+版本号：[2.0.3](https://github.com/zhiiee/cats/tree/hotfix/2.0.3)
+
+> 修正云函数的ESLint代码规范

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const BaseService = require('./base-service')
 
 /**
@@ -11,12 +12,12 @@ class UsersService extends BaseService {
    */
   async login (data, context) {
     // 保留参数，暂时用不到session_key
-    const { code } = data
+    // const { code } = data
 
     const openId = context.OPENID
 
     // 先查询用户 如果查不到就新增 查到了就更新
-    let result = await db.collection('users')
+    const result = await global.db.collection('users')
       .where({ openId: openId })
       .field({
         openId: true,
@@ -29,7 +30,7 @@ class UsersService extends BaseService {
 
     if (result === 0) {
       // 新增
-      let result = await db.collection('users')
+      const result = await global.db.collection('users')
         .add({
           data: {
             openId: openId,
@@ -44,7 +45,7 @@ class UsersService extends BaseService {
       return { data: result }
     } else {
       // 更新
-      await db.collection('users')
+      await global.db.collection('users')
         .where({ openId: openId })
         .update({
           data: {

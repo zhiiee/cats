@@ -1,4 +1,5 @@
-const BaseService = require('./base-service.js')
+/* eslint-disable @typescript-eslint/no-var-requires */
+const BaseService = require('./base-service')
 
 /**
  * 文章相关接口
@@ -7,18 +8,17 @@ class ArticlesService extends BaseService {
   /**
    * 获取文章
    * @param {*} data
-   * @param {*} context
    */
-  async get (data, context) {
+  async get (data) {
     const { code } = data
-    let collection = db.collection('articles')
-    let where = {
-      isHide: _.neq(true),
-      isDelete: _.neq(true),
+    const collection = global.db.collection('articles')
+    const where = {
+      isHide: global._.neq(true),
+      isDelete: global._.neq(true),
       code: code
     }
 
-    let result = await collection
+    const result = await collection
       .where(where)
       .field({
         content: true

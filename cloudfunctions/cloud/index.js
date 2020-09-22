@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const cloud = require('wx-server-sdk')
 const Users = require('./services/users-service')
 const Categories = require('./services/categories-service')
@@ -26,26 +27,26 @@ global.db = cloud.database({
   throwOnNotFound: false,
   autoRecommend: true
 })
-global._ = db.command
-global.$ = _.aggregate
+global._ = global.db.command
+global.$ = global._.aggregate
 global.isInit = false
 
 // 云函数入口
-exports.main = async (event, context) => {
+exports.main = async (event) => {
   const { action, controller, data } = event
 
   // 初始化数据库
-  if (!isInit) {
+  if (!global.isInit) {
     try {
-      await db.createCollection('users').catch(() => null)
-      await db.createCollection('categories').catch(() => null)
-      await db.createCollection('cats').catch(() => null)
-      await db.createCollection('articles').catch(() => null)
-      await db.createCollection('posts').catch(() => null)
+      await global.db.createCollection('users').catch(() => null)
+      await global.db.createCollection('categories').catch(() => null)
+      await global.db.createCollection('cats').catch(() => null)
+      await global.db.createCollection('articles').catch(() => null)
+      await global.db.createCollection('posts').catch(() => null)
     } catch (error) {
       console.log(error)
     } finally {
-      isInit = true
+      global.isInit = true
     }
   }
 
