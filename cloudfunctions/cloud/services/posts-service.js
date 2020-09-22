@@ -110,8 +110,19 @@ class PostsService extends BaseService {
    * @param {*} context
    */
   async update (data, context) {
-    const { id } = data
+    const { id, avatar, cover, photos } = data
     delete data.id
+    let collection = db.collection('posts')
+
+    // 保存头像
+    data.avatar = await this.saveFile(avatar, `cats/avatars/${uuidv4()}.jpg`)
+
+    // 保存封面
+    data.cover = await this.saveFile(cover, `cats/covers/${uuidv4()}.jpg`)
+
+    // 保存照片
+    data.photos = await this.savaPhotos(photos)
+
     let collection = db.collection('posts')
     let result = await collection
       .where({
