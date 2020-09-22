@@ -78,7 +78,6 @@ class PostsService extends BaseService {
    */
   async create (data, context) {
     const { avatar, cover, photos } = data
-    let collection = db.collection('posts')
 
     // 保存头像
     data.avatar = await this.saveFile(avatar, `cats/avatars/${uuidv4()}.jpg`)
@@ -89,6 +88,7 @@ class PostsService extends BaseService {
     // 保存照片
     data.photos = await this.savaPhotos(photos)
 
+    let collection = db.collection('posts')
     let result = await collection
       .add({
         data: {
@@ -112,7 +112,6 @@ class PostsService extends BaseService {
   async update (data, context) {
     const { id, avatar, cover, photos } = data
     delete data.id
-    let collection = db.collection('posts')
 
     // 保存头像
     data.avatar = await this.saveFile(avatar, `cats/avatars/${uuidv4()}.jpg`)
