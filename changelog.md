@@ -37,3 +37,9 @@
 版本号：[2.0.3](https://github.com/zhiiee/cats/tree/hotfix/2.0.3)
 
 > 修正云函数的ESLint代码规范
+
+## 2020年09月27日
+
+版本号：[2.0.4](https://github.com/zhiiee/cats/tree/feature/2.0.4)
+
+> 产品上线 修改订阅消息为正式版

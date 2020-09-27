@@ -359,7 +359,7 @@ class PostsService extends BaseService {
           value: status ? '感谢您提供的信息我们已经为您审核通过！' : '抱歉您提交的信息因包含敏感信息被驳回！'
         }
       },
-      miniprogramState: 'trial',
+      miniprogramState: 'formal',
       lang: 'zh_CN'
     })
   }
